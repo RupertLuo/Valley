@@ -1,0 +1,4 @@
+*-conv.json
+*.log
+**/__pycache__
+**.egg-info
