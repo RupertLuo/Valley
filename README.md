@@ -4,7 +4,7 @@ Understanding Complex Videos Relying on Large Language and Vision Models
 [[Project Page]()] [[Paper]()]
 
 **Video assistant towards large language model makes everything easy** <br>
-[Ruipu Luo*](https://hliu.cc), [Ziwang Zhao*](), [Min Yang*]() (*Equal Contribution)
+[Ruipu Luo*](), [Ziwang Zhao*](), [Min Yang*]() (*Equal Contribution)
 
 <p align="center">
     <img src="valley/logo/lama_with_valley.jpeg" width="100%"></a> 
