@@ -159,14 +159,12 @@ def gather_result(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model-name", type=str, default="../checkpoints/stable-valley-13b-v1")
+    parser.add_argument("--model-name", type=str, default="")
     parser.add_argument("--query", type=str, required=False,default="Describe the following video concisely.")
-    parser.add_argument("--video_file", type=str, required=False,default="/mnt/bn/luoruipu-disk/LLaVa-personal/serve_images/2023-06-06/aa5dbc3a110f410bb02572408b0fb778.mp4")
+    parser.add_argument("--video_file", type=str, required=False,default="")
     parser.add_argument("--vision-tower", type=str, default=None)
     parser.add_argument("--conv-mode", type=str, default="multimodal_video")
     args = parser.parse_args()
-
-    # os.environ["CUDA_VISIBLE_DEVICES"] = cfg.gpu_ids
     inference(args)
 
     
