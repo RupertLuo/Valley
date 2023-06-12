@@ -7,7 +7,7 @@ Understanding Complex Videos Relying on Large Language and Vision Models
 [Ruipu Luo*](https://hliu.cc), [Ziwang Zhao*](), [Min Yang*]() (*Equal Contribution)
 
 <p align="center">
-    <img src="valley/logo/lama_with_valley.jpeg" width="100%">></a> 
+    <img src="valley/logo/lama_with_valley.jpeg" width="100%"></a> 
 </p>
 
 [![Code License](https://img.shields.io/badge/Code%20License-Apache_2.0-green.svg)](https://github.com/tatsu-lab/stanford_alpaca/blob/main/LICENSE)
