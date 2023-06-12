@@ -38,7 +38,7 @@ pip install --upgrade pip
 pip install -e .
 ```
 
-## Inference Valley in Command Line (**⛰️Valley weight will be upload soon!**)
+## Inference Valley in Command Line (⛰️**Valley weight will be upload soon!**)
 
 
 inference CLI
