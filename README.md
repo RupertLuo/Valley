@@ -1,9 +1,9 @@
-# ⛰️Valley: Video assistant towards large language model makes everything easy
+# ⛰️Valley: Video Assistant with Large Language model Enhanced abilitY
 Understanding Complex Videos Relying on Large Language and Vision Models
 
 [[Project Page]()] [[Paper]()]
 
-**Video assistant towards large language model makes everything easy** <br>
+**Video Assistant with Large Language model Enhanced abilitY** <br>
 [Ruipu Luo*](), [Ziwang Zhao*](), [Min Yang*]() (*Equal Contribution)
 
 <p align="center">
@@ -15,7 +15,7 @@ Understanding Complex Videos Relying on Large Language and Vision Models
 **Usage and License Notices**: The data, code and checkpoint is intended and licensed for research use only. They are also restricted to uses that follow the license agreement of LLaMA, Vicuna and GPT-4. The dataset is CC BY NC 4.0 (allowing only non-commercial use) and models trained using the dataset should not be used outside of research purposes.
 
 ## Release
-- [6/12] 🫧 We released Valley: Video assistant towards large language model makes everything easy**.  Checkout the [paper]().
+- [6/12] 🫧 We released Valley: Video Assistant with Large Language model Enhanced abilitY**.  Checkout the [paper]().
 
 ## Todo
 - ~~Release inference code~~
@@ -37,8 +37,8 @@ pip install --upgrade pip
 pip install -e .
 ```
 
-## Inference Valley in Command Line
-**Valley weight will be upload soon!**
+## Inference Valley in Command Line (**⛰️Valley weight will be upload soon!**)
+
 
 inference CLI
 ```
