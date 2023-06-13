@@ -1,7 +1,7 @@
 # ⛰️Valley: Video Assistant with Large Language model Enhanced abilitY
 Understanding Complex Videos Relying on Large Language and Vision Models
 
-[[Project Page]()] [[Paper](https://arxiv.org/pdf/2306.07207.pdf)]
+[[Project Page](https://valley-vl.github.io/)] [[Paper](https://arxiv.org/pdf/2306.07207.pdf)]
 
 **Video Assistant with Large Language model Enhanced abilitY** <br>
 [Ruipu Luo*](https://github.com/RupertLuo), [Ziwang Zhao*](), [Min Yang*](https://github.com/feymanpriv) (*Equal Contribution)
