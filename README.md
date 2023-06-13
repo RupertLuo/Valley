@@ -20,7 +20,7 @@ Understanding Complex Videos Relying on Large Language and Vision Models
 
 ## Todo
 - ~~Release inference code~~
-- Upload weight of **Valley-v1** and build a share link demo
+- ~~Upload weight of **Valley-v1**~~ and build a share link demo
 - Release 47k instruction tuning data 
 - Upload pretrain and tuning code
 
