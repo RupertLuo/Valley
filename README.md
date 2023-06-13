@@ -66,7 +66,8 @@ python3 inference/run_valley.py --model_name [PATH TO VALLEY WEIGHT] --video_fil
 - 
 ## Citation
 If the project is helpful to your research, please consider citing our paper as follows
-···bibtex
+
+```bibtex
 @misc{luo2023valley,
       title={Valley: Video Assistant with Large Language model Enhanced abilitY}, 
       author={Ruipu Luo and Ziwang Zhao and Min Yang and Junwei Dong and Minghui Qiu and Pengcheng Lu and Tao Wang and Zhongyu Wei},
