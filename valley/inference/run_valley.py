@@ -1,7 +1,7 @@
 import argparse
 import torch
 from transformers import LlamaTokenizer
-from valley.model.mul_img_modeling_llama import ValleyLlamaForCausalLM
+from valley.model.valley import ValleyLlamaForCausalLM
 import torch
 import os
 from valley.utils import disable_torch_init
@@ -159,9 +159,9 @@ def gather_result(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model-name", type=str, default="")
+    parser.add_argument("--model-name", type=str, default=None)
     parser.add_argument("--query", type=str, required=False,default="Describe the following video concisely.")
-    parser.add_argument("--video_file", type=str, required=False,default="")
+    parser.add_argument("--video_file", type=str, required=False,default=None)
     parser.add_argument("--vision-tower", type=str, default=None)
     parser.add_argument("--conv-mode", type=str, default="multimodal_video")
     args = parser.parse_args()
