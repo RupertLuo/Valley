@@ -65,7 +65,7 @@ python3 inference/run_valley.py --model_name [PATH TO VALLEY WEIGHT] --video_fil
 - [LLaVA](https://github.com/haotian-liu/LLaVA) & [MOSS](https://github.com/OpenLMLab/MOSS): Thanks to these two repositories for providing high-quality code, our code is based on them.
 - 
 ## Citation
-
+···bibtex
 @misc{luo2023valley,
       title={Valley: Video Assistant with Large Language model Enhanced abilitY}, 
       author={Ruipu Luo and Ziwang Zhao and Min Yang and Junwei Dong and Minghui Qiu and Pengcheng Lu and Tao Wang and Zhongyu Wei},
