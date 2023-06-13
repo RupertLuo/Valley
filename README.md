@@ -37,6 +37,12 @@ conda activate valley
 pip install --upgrade pip 
 pip install -e .
 ```
+## ValleyWeight
+We release [Valley]() delta weights weights to comply with the LLaMA model license. You can apply this delta weights to original LLaMA model weight through the instructions blew:
+
+1. Get the original LLaMA weights in the huggingface format by following the instructions structions [here](https://huggingface.co/docs/transformers/main/model_doc/llama).
+2. Use the following scripts to get LLaVA weights by applying our delta ([13b-v0](https://huggingface.co/liuhaotian/LLaVA-13b-delta-v0), It will automatically download delta weights from our Hugging Face account.
+
 
 ## Inference Valley in Command Line (⛰️**Valley weight will be upload soon!**)
 
