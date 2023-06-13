@@ -41,7 +41,7 @@ pip install -e .
 We release [Valley]() delta weights weights to comply with the LLaMA model license. You can apply this delta weights to original LLaMA model weight through the instructions blew:
 
 1. Get the original LLaMA weights in the huggingface format by following the instructions structions [here](https://huggingface.co/docs/transformers/main/model_doc/llama).
-2. Use the following scripts to get Valley weights by applying our delta ([13b-v0])(https://huggingface.co/luoruipu1/valley-13b-v1-delta).
+2. Use the following scripts to get Valley weights by applying our delta ([13b-v0](https://huggingface.co/luoruipu1/valley-13b-v1-delta)).
 ### Valley 13b v1
 ```bash
 python3 valley/model/apply_delta \
