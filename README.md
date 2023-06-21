@@ -51,9 +51,12 @@ python3 valley/model/apply_delta.py \
     --target /output/path/to/Valley-13B-v1 \
     --delta /path/to/valley-13b-v1-delta
 ```
-## Demo
+## web UI
+<p align="center">
+    <img src="valley/logo/demo_screenshot.jpg" width="100%"><br>
+</p>
 
-### web UI
+The framework of this webUI comes from [LLaVA](https://github.com/haotian-liu/LLaVA) and [FastChat](https://github.com/lm-sys/FastChat), we modified a part of the code to make this demo support the input of video and images.
 #### launch a controller
 ```bsah
 python valley/serve/controller.py
@@ -62,6 +65,7 @@ python valley/serve/controller.py
 ```bsah
 python valley/serve/model_worker.py --model-path /path/to/valley-13b-v1
 ```
+Ps: At present, only single card mode is supported to load the model, and at least 30G of video memory is required, so the graphics card needs at least one Tesla V100.
 #### launch a gradio demo 
 ```bash
 python valley/serve/gradio_web_server_video.py --share
