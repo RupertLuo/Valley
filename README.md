@@ -16,6 +16,7 @@ Understanding Complex Videos Relying on Large Language and Vision Models
 **Usage and License Notices**: The data, code and checkpoint is intended and licensed for research use only. They are also restricted to uses that follow the license agreement of LLaMA, Vicuna and GPT-4. The dataset is CC BY NC 4.0 (allowing only non-commercial use) and models trained using the dataset should not be used outside of research purposes.
 
 ## Release
+- [6/21] 🫧 upload offline demo code.
 - [6/14] 🫧 build a share link [demo](https://ce9b4fd9f666cfca01.gradio.live).
 - [6/13] 🫧 We uploaded model weight of [Valley-13b-v1-delta](https://huggingface.co/luoruipu1/valley-13b-v1-delta).
 - [6/12] 🫧 We released Valley: Video Assistant with Large Language model Enhanced abilitY.  Checkout the [paper](https://arxiv.org/pdf/2306.07207.pdf).
@@ -23,6 +24,7 @@ Understanding Complex Videos Relying on Large Language and Vision Models
 ## Todo
 - ~~Release inference code~~
 - ~~Upload weight of **Valley-v1** and build a share link demo~~
+- ~~Upload offline demo code~~
 - Release 47k instruction tuning data 
 - Upload pretrain and tuning code
 
