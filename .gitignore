@@ -2,3 +2,5 @@
 *.log
 **/__pycache__
 **.egg-info
+weight
+serve_images

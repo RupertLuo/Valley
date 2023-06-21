@@ -46,18 +46,33 @@ We release [Valley]() delta weights weights to comply with the LLaMA model licen
 2. Use the following scripts to get Valley weights by applying our delta ([13b-v1](https://huggingface.co/luoruipu1/valley-13b-v1-delta)).
 ### Valley 13b v1
 ```bash
-python3 valley/model/apply_delta \
+python3 valley/model/apply_delta.py \
     --base /path/to/llama-13b \
     --target /output/path/to/Valley-13B-v1 \
-    --delta luoruipu1/valley-13b-v1-delta
+    --delta /path/to/valley-13b-v1-delta
 ```
+## Demo
+
+### web UI
+#### launch a controller
+```bsah
+python valley/serve/controller.py
+```
+#### launch a model worker
+```bsah
+python valley/serve/model_worker.py --model-path /path/to/valley-13b-v1
+```
+#### launch a gradio demo 
+```bash
+python valley/serve/gradio_web_server_video.py --share
+```
+
 
 ## Inference Valley in Command Line
 
-
 inference CLI
 ```
-python3 inference/run_valley.py --model_name [PATH TO VALLEY WEIGHT] --video_file [PATH TO VIDEO] --quary [YOUR QUERY ON THE VIDEO]
+python3 inference/run_valley.py --model-name [PATH TO VALLEY WEIGHT] --video_file [PATH TO VIDEO] --quary [YOUR QUERY ON THE VIDEO]
 ```
 
 

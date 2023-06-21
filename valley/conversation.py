@@ -19,7 +19,7 @@ class Conversation:
     sep_style: SeparatorStyle = SeparatorStyle.SINGLE
     sep: str = "###"
     sep2: str = None
-
+    mode: str = None
     skip_next: bool = False
 
     def get_prompt(self):
@@ -72,6 +72,8 @@ class Conversation:
                     from io import BytesIO
                     from PIL import Image
                     msg, image_list, image_process_mode = msg
+                    if type(image_list) is not list:
+                        image_list = [image_list]
                     for image in image_list:
                         if image_process_mode == "Pad":
                             def expand2square(pil_img, background_color=(122, 116, 104)):
@@ -120,25 +122,24 @@ class Conversation:
                 if type(msg) is tuple:
                     import base64
                     from io import BytesIO
-                    msg, images, image_process_mode = msg
+                    msg, image, image_process_mode = msg
                     img_str = ''
-                    for image in images:
-                        max_hw, min_hw = max(image.size), min(image.size)
-                        aspect_ratio = max_hw / min_hw
-                        max_len, min_len = 800, 400
-                        shortest_edge = int(min(max_len / aspect_ratio, min_len, min_hw))
-                        longest_edge = int(shortest_edge * aspect_ratio)
-                        W, H = image.size
-                        if H > W:
-                            H, W = longest_edge, shortest_edge
-                        else:
-                            H, W = shortest_edge, longest_edge
-                        image = image.resize((W, H))
-                        # image = image.resize((224, 224))
-                        buffered = BytesIO()
-                        image.save(buffered, format="JPEG")
-                        img_b64_str = base64.b64encode(buffered.getvalue()).decode()
-                        img_str = img_str+f'<img src="data:image/png;base64,{img_b64_str}" alt="user upload image" />'
+                    max_hw, min_hw = max(image.size), min(image.size)
+                    aspect_ratio = max_hw / min_hw
+                    max_len, min_len = 800, 400
+                    shortest_edge = int(min(max_len / aspect_ratio, min_len, min_hw))
+                    longest_edge = int(shortest_edge * aspect_ratio)
+                    W, H = image.size
+                    if H > W:
+                        H, W = longest_edge, shortest_edge
+                    else:
+                        H, W = shortest_edge, longest_edge
+                    image = image.resize((W, H))
+                    # image = image.resize((224, 224))
+                    buffered = BytesIO()
+                    image.save(buffered, format="JPEG")
+                    img_b64_str = base64.b64encode(buffered.getvalue()).decode()
+                    img_str = img_str+f'<img src="data:image/png;base64,{img_b64_str}" alt="user upload image" />'
                     msg = msg.replace('<image>', '')+img_str
                     ret.append([msg, None])
                 else:
@@ -157,7 +158,7 @@ class Conversation:
                     with open(video, "rb") as videoFile:
                         video_b64_str = base64.b64encode(videoFile.read()).decode("utf-8") 
                     img_str = ''
-                    img_str = img_str+f'''<video autoplay controls align="left" style="height: 200px;" src="data:video/mp4;base64,{video_b64_str}">
+                    img_str = img_str+f'''<video controls align="left" style="height: 200px;" src="data:video/mp4;base64,{video_b64_str}">
                                             The “video” tag is not supported by your browser. Click [here] to download the video file.
                                             </video>'''
                     msg = msg.replace('<video>', '')+img_str
@@ -210,7 +211,7 @@ simple_conv_video = Conversation(
     sep_style=SeparatorStyle.SINGLE,
     sep="###",
 )
-
+default_conversation = simple_conv_video
 conv_templates = {
     "multimodal_video":simple_conv_video,
 }
