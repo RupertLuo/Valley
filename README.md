@@ -55,7 +55,7 @@ python3 valley/model/apply_delta.py \
 ```
 ## web UI
 <p align="center">
-    <img src="valley/logo/demo_screenshot.jpg" width="100%"><br>
+    <img src="valley/logo/demo.GIF" width="100%"><br>
 </p>
 
 The framework of this webUI comes from [LLaVA](https://github.com/haotian-liu/LLaVA) and [FastChat](https://github.com/lm-sys/FastChat), we modified a part of the code to make this demo support the input of video and images.
