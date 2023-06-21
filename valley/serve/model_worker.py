@@ -487,7 +487,7 @@ if __name__ == "__main__":
         default="http://localhost:39999")
     parser.add_argument("--controller-address", type=str,
         default="http://localhost:20000")
-    parser.add_argument("--model-path", type=str, default="/mnt/bn/luoruipu-disk/checkpoints/stable-valley-13b-v1")
+    parser.add_argument("--model-path", type=str, default="")
     parser.add_argument("--model-name", type=str)
     parser.add_argument("--multi-modal", action="store_true", help="Multimodal mode is automatically detected with model name, please make sure `valley` is included in the model path.")
     parser.add_argument("--keep-aspect-ratio", action="store_true")
