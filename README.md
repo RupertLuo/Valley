@@ -53,7 +53,7 @@ python3 valley/model/apply_delta.py \
     --target /output/path/to/Valley-13B-v1 \
     --delta /path/to/valley-13b-v1-delta
 ```
-## web UI
+## Web UI
 <p align="center">
     <img src="valley/logo/demo.GIF" width="100%"><br>
 </p>
