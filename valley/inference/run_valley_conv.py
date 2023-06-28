@@ -3,10 +3,10 @@ import torch
 import sys
 sys.path.append('./valley')
 from transformers import LlamaTokenizer
-from model.mul_img_modeling_llama import ValleyLlamaForCausalLM
+from valley.model.valley import ValleyLlamaForCausalLM
 import torch
 import os
-from llava.utils import disable_torch_init
+from valley.utils import disable_torch_init
 from transformers import CLIPImageProcessor
 import os
 import random
