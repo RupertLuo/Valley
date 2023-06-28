@@ -23,7 +23,7 @@ def load_video(path,image_processor):
         video_reader = decord.VideoReader(path, num_threads=1, ctx=decord.cpu(0))
         decord.bridge.set_bridge('torch')
         video_len = len(video_reader)
-        video = video_reader.get_batch(np.linspace(0, video_len - 1, 8).astype(np.int_)).byte()
+        video = video_reader.get_batch(np.linspace(0, video_len - 1, 8).astype(np.int_)).byte()#8, height,width,3
         video = video.permute(3, 0, 1, 2) # 3 x 8 x height x width
         input_mean = [0.48145466, 0.4578275, 0.40821073]
         input_std = [0.26862954, 0.26130258, 0.27577711]
@@ -37,10 +37,15 @@ def load_video(path,image_processor):
         ])
         video = trans(video)
     else:
-        video_frames = list(Path(path).rglob('*.jpg'))
+        video_frames = list(Path(path).rglob('*'))
         video_frames = [Image.open(path) for path in video_frames]
-        video_frames = torch.stack([image_processor.preprocess(image_list, return_tensors='pt')['pixel_values'] for image_list in video_frames],dim=0)
-        video = video.permute(3, 0, 1, 2)
+        if 1 <= video_frames[0].size[1]/video_frames[0].size[0]:
+            min_length = min(video_frames[0].size)
+            resize = transforms.Resize([min_length,min_length])
+            video_frames = [resize(frame) for frame in video_frames]
+            test_frame = video_frames[0]
+        video = image_processor.preprocess(video_frames, return_tensors='pt')['pixel_values']
+        video = video.permute(1,0, 2, 3)
     return video
 
 def inference(args):

@@ -17,7 +17,8 @@ dependencies = [
     "requests", "sentencepiece", "tokenizers==0.12.1",
     "torch", "torchvision", "uvicorn",
     "transformers @ git+https://github.com/huggingface/transformers.git@cae78c46", 
-    "ninja", "decord","einops","scikit-image","opencv-python-headless"
+    "ninja", "decord","einops","scikit-image","opencv-python-headless",
+    "deepspeed", "wandb",
 ]
 
 [project.urls]
