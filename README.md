@@ -18,7 +18,8 @@ The online demo is no longer available, because we released the code for offline
 **Usage and License Notices**: The data, code and checkpoint is intended and licensed for research use only. They are also restricted to uses that follow the license agreement of LLaMA, Vicuna and GPT-4. The dataset is CC BY NC 4.0 (allowing only non-commercial use) and models trained using the dataset should not be used outside of research purposes.
 
 ## Release
-- [7/5]   🫧 Release training code for valley, and upload our pretraining data 
+- [7/23] 🫧We modified the code of our training model to make it easier to train valley and support the training of lora and llama2
+- [7/5]  🫧 Release training code for valley, and upload our pretraining data 
 - [6/21] 🫧 upload offline demo code.
 - [6/14] 🫧 build a share link ~[[demo]()]~.
 - [6/13] 🫧 We uploaded model weight of [Valley-13b-v1-delta](https://huggingface.co/luoruipu1/valley-13b-v1-delta).
@@ -91,83 +92,18 @@ python3 inference/run_valley.py --model-name [PATH TO VALLEY WEIGHT] --video_fil
 
 Inspired by LLAVA, we adopt a two-stage training method. The pre-training stage uses the [Valley-webvid2M-Pretrain-703K](https://huggingface.co/datasets/luoruipu1/Valley-webvid2M-Pretrain-703K) and [LLaVA-CC3M-Pretrain-595K](https://huggingface.co/datasets/liuhaotian/LLaVA-Pretrain).  And fine-tune stage uses [LLaVA-instruct-150K](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K) ,  [VideoChat-instruct-11K](https://github.com/OpenGVLab/InternVideo/tree/main/Data/instruction_data)  and Valley-instruct-40K (Still generating and cleaning, Valley-13b-v1 trained from previous 2 dataset) 
 
+We modified our code for training valley and managed the model hyperparameters with yaml files. Run the following two scripts to perform valley training.
+
 ### Pretrain
 
 ```shell
-accelerate launch --main_process_port 6777 \
-    --config_file ./configs/config.yaml 
-    valley/train/train_accelerate.py \
-    --model_name_or_path path/to/vicuna-13b \
-    --data_path path/to/LLaVA-CC3M-Pretrain-595K/chat.json \
-    --video_data_path path/to/webvid_703K/chat.json \
-    --image_folder path/to/LLaVA-CC3M-Pretrain-595K/image/folder \
-    --video_folder path/to/webvid/video/folder \
-    --vision_tower openai/clip-vit-large-patch14 \
-    --tune_mm_mlp_adapter True \
-    --mm_vision_select_layer -2 \
-    --tune_llm_layer none \
-    --mm_use_im_start_end True \
-    --bf16 False \
-    --fp16 True \
-    --output_dir path/to/save/zero/model \
-    --num_train_epochs 6 \
-    --per_device_train_batch_size 16 \
-    --per_device_eval_batch_size 1 \
-    --gradient_accumulation_steps 1 \
-    --evaluation_strategy no \
-    --save_strategy steps \
-    --save_steps 2400 \
-    --save_total_limit 3 \
-    --learning_rate 2e-3 \
-    --weight_decay 0. \
-    --warmup_ratio 0.03 \
-    --lr_scheduler_type cosine \
-    --logging_steps 1 \
-    --tf32 False \
-    --model_max_length 2048 \
-    --gradient_checkpointing True \
-    --lazy_preprocess True \
-    --report_to wandb \
-    --fast_epoch False
+bash valley/train/train.sh valley/configs/experiment/valley_stage1.yaml
 ```
 
 #### Finetune
 
 ```shell
-accelerate launch --main_process_port 6777 \
-    --config_file ./configs/config.yaml \
-    valley/train/train_accelerate.py \
-    --model_name_or_path path/to/pretrain/valley/model \
-    --data_path path/to/llava_instruct_150k.json \
-    --video_data_path path/to/videochat-11k/chat.json \
-    --image_folder path/to/llava_instruct_150k/image/folder \
-    --video_folder path/to/webvid/video/folder \
-    --tune_mm_mlp_adapter True \
-    --vision_tower openai/clip-vit-large-patch14 \
-    --mm_vision_select_layer -2 \
-    --mm_use_im_start_end True \
-    --bf16 False \
-    --fp16 True \
-    --output_dir path/to/save/model/folder \
-    --num_train_epochs 3 \
-    --per_device_train_batch_size 4 \
-    --per_device_eval_batch_size 1 \
-    --gradient_accumulation_steps 1 \
-    --evaluation_strategy no \
-    --save_strategy steps \
-    --save_steps 3000 \
-    --save_total_limit 3 \
-    --learning_rate 2e-5 \
-    --weight_decay 0. \
-    --warmup_ratio 0.03 \
-    --lr_scheduler_type cosine \
-    --logging_steps 1 \
-    --tf32 False \
-    --model_max_length 2048 \
-    --gradient_checkpointing True \
-    --lazy_preprocess True \
-    --report_to wandb \
-    --fast_epoch False 
+bash valley/train/train.sh valley/configs/experiment/valley_stage2.yaml
 ```
 
 
