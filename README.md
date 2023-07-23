@@ -18,7 +18,7 @@ The online demo is no longer available, because we released the code for offline
 **Usage and License Notices**: The data, code and checkpoint is intended and licensed for research use only. They are also restricted to uses that follow the license agreement of LLaMA, Vicuna and GPT-4. The dataset is CC BY NC 4.0 (allowing only non-commercial use) and models trained using the dataset should not be used outside of research purposes.
 
 ## Release
-- [7/23] 🫧We modified the code of our training model to make it easier to train valley and support the training of lora and llama2
+- [7/23] 🫧W e modified the our training code to make it easier to train valley and also support the training of lora.
 - [7/5]  🫧 Release training code for valley, and upload our pretraining data 
 - [6/21] 🫧 upload offline demo code.
 - [6/14] 🫧 build a share link ~[[demo]()]~.
@@ -95,7 +95,7 @@ Inspired by LLAVA, we adopt a two-stage training method. The pre-training stage 
 We modified our code for training valley and managed the model hyperparameters with yaml files. Run the following two scripts to perform valley training.
 
 ### Pretrain
-
+The llm backbone that currently supports pre-training is Llama(7b,13b), vicuna(7b,13b), stable-vicuna(13b), Llama2(chat-7b, chat-13b). You need to download these open source language model weights yourself and convert them to the huggingface format. 
 ```shell
 bash valley/train/train.sh valley/configs/experiment/valley_stage1.yaml
 ```
