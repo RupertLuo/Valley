@@ -159,15 +159,15 @@ def train(args):
         for p in model.get_model().mm_projector.parameters():
             p.requires_grad = False
     
-    if 'nppc' in training_args.output_dir or 'mfe' in training_args.output_dir:
-        data_module = make_supervised_data_module(tokenizer=tokenizer,
-                                              data_args=data_args)
-        callback_class = LLMCallback
+    
+
+    data_module = make_video_supervised_data_module(tokenizer=tokenizer,
+                                            data_args=data_args)
+    if training_args.lora:
+        callback_class =  LLMCallback
     else:
-        print('no lora')
-        data_module = make_video_supervised_data_module(tokenizer=tokenizer,
-                                              data_args=data_args)
         callback_class =  TrainerCallback
+
     
     trainer = Trainer(model=model,
                     tokenizer=tokenizer,
