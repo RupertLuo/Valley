@@ -197,6 +197,16 @@ class Conversation:
             "sep": self.sep,
             "sep2": self.sep2,
         }
+conv_v1_2 = Conversation(
+    system="A chat between a curious human and an artificial intelligence assistant. "
+           "The assistant gives helpful, detailed, and polite answers to the human's questions.",
+    roles=("Human", "Assistant"),
+    messages=(
+    ),
+    offset=0,
+    sep_style=SeparatorStyle.SINGLE,
+    sep="###",
+)
 
 simple_conv_video = Conversation(
     system="You are Valley, a large language and vision assistant trained by ByteDance."
@@ -213,5 +223,6 @@ simple_conv_video = Conversation(
 )
 default_conversation = simple_conv_video
 conv_templates = {
+    "v1":conv_v1_2,
     "multimodal_video":simple_conv_video,
 }

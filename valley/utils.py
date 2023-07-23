@@ -3,15 +3,68 @@ import logging
 import logging.handlers
 import os
 import sys
-
 import requests
 
 from valley.constants import LOGDIR
-
+import re
 server_error_msg = "**NETWORK ERROR DUE TO HIGH TRAFFIC. PLEASE REGENERATE OR REFRESH THIS PAGE.**"
 moderation_msg = "YOUR INPUT VIOLATES OUR CONTENT MODERATION GUIDELINES. PLEASE TRY AGAIN."
 
 handler = None
+import logging
+import sys
+
+import torch.distributed as dist
+from prettytable import PrettyTable
+
+
+
+def print_trainable_params(model):
+    if dist.get_rank() == 0:
+        trainable_params = [k for k,v in model.named_parameters() if v.requires_grad]
+        trainable_params_group = {}
+        for para in trainable_params:
+            layer_num = re.findall(r'layers.(\d+)\.',para)
+            if layer_num:
+                cur_layer = int(layer_num[0])
+                if para.replace('layers.'+layer_num[0],'layers.*') not in trainable_params_group:
+                    trainable_params_group[para.replace('layers.'+layer_num[0],'layers.*')] = layer_num[0]
+                elif cur_layer > int(trainable_params_group[para.replace('layers.'+layer_num[0],'layers.*')]):
+                    trainable_params_group[para.replace('layers.'+layer_num[0],'layers.*')] = layer_num[0]
+                    
+            else:
+                trainable_params_group[para] = '0'
+        table = PrettyTable(['Parameter Name','Max Layer Number'])
+        for key in trainable_params_group.keys():
+            table.add_row([key, str(int(trainable_params_group[key])+1)])
+        
+        print(table)
+        total_num = sum([v.numel() for k,v in model.named_parameters()])
+        trainable_num = sum([v.numel() for k,v in model.named_parameters() if v.requires_grad])
+        print('Total: {:.2f}M'.format(total_num/1e6), ' Trainable: {:.2f}M'.format(trainable_num/1e6))
+
+def rank_zero_info(content: str, logger, print_type: str = "info"):
+    output_method = getattr(logger, print_type)
+    if dist.get_rank() == 0:
+        output_method(content)
+
+
+def get_logger(name: str):
+    # logger initialize
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.INFO)
+    # handler
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.INFO)
+    # formatter
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    handler.setFormatter(formatter)
+    # add handler
+    logger.addHandler(handler)
+
+    return logger
 
 
 def build_logger(logger_name, logger_filename):

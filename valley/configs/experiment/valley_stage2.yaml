@@ -1,0 +1,52 @@
+model_name_or_path: Path/to/pretrain-valley/from/stage/1
+data_path: Path/to/finetun_data/LLaVA-Instruct-150K/llava_instruct_150k.json
+image_folder: Path/to/CoCo/train2014
+video_data_path: Path/to/videochat_instruct_11k.json
+video_folder: Path/to/videochat_instruct_11k/videos
+output_dir: Path/to/model/out/dir
+# experiment name
+project_name: valley
+
+# Whether to make the system prompt a mask in the label, and others do not mask
+only_mask_system: False
+# system prompt style
+conv_mode: v1
+# wether freeze backbone
+freeze_backbone: False
+# wether tune multimodal projection layer
+tune_mm_mlp_adapter: True
+# wether lora
+lora: False
+# wether multimodal
+is_multimodal: True
+
+num_train_epochs: 3
+per_device_train_batch_size: 4
+save_strategy: steps
+save_steps: 5000
+learning_rate: 2e-5
+gradient_checkpointing: True
+
+# wether do fast epoch
+fast_epoch: False
+
+vision_tower: openai/clip-vit-large-patch14
+mm_vision_select_layer: -2
+mm_use_im_start_end: True
+lazy_preprocess: True
+bf16: False
+fp16: True
+tf32: False
+per_device_eval_batch_size: 1
+gradient_accumulation_steps: 1
+evaluation_strategy: "no"
+save_total_limit: 3
+weight_decay: 0.
+warmup_ratio: 0.03 
+lr_scheduler_type: cosine
+logging_steps: 1 
+model_max_length: 2048 
+adam_beta1: 0.9 
+adam_beta2: 0.95 
+deepspeed: valley/configs/deepspeed/config_zero2.json
+report_to: wandb

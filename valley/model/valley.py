@@ -23,7 +23,7 @@ DEFAULT_VI_END_TOKEN = "<vi_end>"
 
 
 class ValleyConfig(LlamaConfig):
-    model_type = "Valley"
+    model_type = "valley"
 
 class ValleyLlamaModel(LlamaModel):
     config_class = ValleyConfig
@@ -110,113 +110,67 @@ class ValleyLlamaModel(LlamaModel):
                     # variable length images
                     image_features = []
                     for image in images:
-                        # multiimage
-                        if self.multi_image:
-                            image_forward_out = vision_tower(image, output_hidden_states=True)
-                        else:
-                            image_forward_out = vision_tower(image.unsqueeze(0), output_hidden_states=True)
+                        image_forward_out = vision_tower(image, output_hidden_states=True)
                         select_hidden_state_layer = getattr(self.config, "mm_vision_select_layer", -1)
                         select_hidden_state = image_forward_out.hidden_states[select_hidden_state_layer]
                         image_feature = select_hidden_state[:, :]
+                        image_feature = self.mm_projector(image_feature)
                         image_features.append(image_feature)
                 else:
-                    if self.multi_image:
-                        image_features = []
-                        for batch_id in range(len(images)):
-                            image_forward_outs = vision_tower(images[batch_id], output_hidden_states=True)
-                            select_hidden_state_layer = getattr(self.config, "mm_vision_select_layer", -1)
-                            select_hidden_state = image_forward_outs.hidden_states[select_hidden_state_layer]
-                            image_features.append(select_hidden_state[:, :])
-                        image_features = torch.stack(image_features)
-                    else:
-                        image_forward_outs = vision_tower(images, output_hidden_states=True)
+                    image_features = []
+                    for batch_id in range(len(images)):
+                        image_forward_outs = vision_tower(images[batch_id], output_hidden_states=True)# 8,3,224,224
                         select_hidden_state_layer = getattr(self.config, "mm_vision_select_layer", -1)
                         select_hidden_state = image_forward_outs.hidden_states[select_hidden_state_layer]
-                        image_features = select_hidden_state[:, :]
-            if type(images) is list:
-                if self.multi_image:
-                    image_features = [self.mm_projector(image_feature) for image_feature in image_features]
-                else:
-                    image_features = [self.mm_projector(image_feature)[0] for image_feature in image_features]
-            else:
-                image_features = self.mm_projector(image_features)
-            dummy_image_features = torch.zeros(256, 1024, device=inputs_embeds.device, dtype=inputs_embeds.dtype)
-            dummy_image_features = self.mm_projector(dummy_image_features)
+                        image_features.append(select_hidden_state[:, :])
+                    image_features = torch.stack(image_features)
+                    image_features = self.mm_projector(image_features)
 
-            
 
             new_input_embeds = []
             cur_image_idx = 0 # this index is for batch 
             for cur_input_ids, cur_input_embeds in zip(input_ids, inputs_embeds):
                 if (cur_input_ids == vision_tower.config.im_patch_token).sum() == 0:
                     # multimodal LLM, but the current sample is not multimodal
+                    dummy_image_features = self.mm_projector(torch.zeros(256, 1024, device=inputs_embeds.device, dtype=inputs_embeds.dtype))
                     cur_input_embeds = cur_input_embeds + (0. * dummy_image_features).sum()
                     new_input_embeds.append(cur_input_embeds)
                     continue
-                if vision_tower.config.use_im_start_end:
-                    if self.multi_image:
-                        cur_image_features = image_features[cur_image_idx]
-                        mean_image_features = torch.mean(cur_image_features[:,1:,:],dim=0) # 256 , 4096
-                        frame_image_features = cur_image_features[:,0,:]# frame_length, 4096
-                        num_patches = mean_image_features.shape[0]
-                        
 
-                        if (cur_input_ids == vision_tower.config.im_start_token).sum() != (cur_input_ids == vision_tower.config.im_end_token).sum():
-                            raise ValueError("The number of im_start_token and im_end_token should be the same")
-                        image_start_tokens = torch.where(cur_input_ids == vision_tower.config.im_start_token)[0]
-                        multi_iamge_index = 0 # this index is for multi_image
-                        cur_new_input_embeds = cur_input_embeds.clone() # to save the new embed
-                        for image_start_token_pos in image_start_tokens: #this loop is for multi_image in one piece
-                            cur_image_features = mean_image_features.to(device=cur_input_embeds.device)
-                            if cur_input_ids[image_start_token_pos + num_patches + 1] != vision_tower.config.im_end_token:
-                                raise ValueError("Seems that the image is cut.")
-                            cur_new_input_embeds = torch.cat((cur_new_input_embeds[:image_start_token_pos+1], cur_image_features, cur_new_input_embeds[image_start_token_pos + num_patches + 1:]), dim=0)
-                            multi_iamge_index+=1
+                cur_image_features = image_features[cur_image_idx]
+                mean_image_features = torch.mean(cur_image_features[:,1:,:],dim=0) # 256 , 4096
+                frame_image_features = cur_image_features[:,0,:]# frame_length, 4096
+                num_patches = mean_image_features.shape[0]
+                
 
+                if (cur_input_ids == vision_tower.config.im_start_token).sum() != (cur_input_ids == vision_tower.config.im_end_token).sum():
+                    raise ValueError("The number of im_start_token and im_end_token should be the same")
+                image_start_tokens = torch.where(cur_input_ids == vision_tower.config.im_start_token)[0]
+                multi_iamge_index = 0 # this index is for multi_image
+                cur_new_input_embeds = cur_input_embeds.clone() # to save the new embed
+                for image_start_token_pos in image_start_tokens: #this loop is for multi_image in one piece
+                    cur_image_features = mean_image_features.to(device=cur_input_embeds.device)
+                    if cur_input_ids[image_start_token_pos + num_patches + 1] != vision_tower.config.im_end_token:
+                        raise ValueError("Seems that the image is cut.")
+                    cur_new_input_embeds = torch.cat((cur_new_input_embeds[:image_start_token_pos+1], cur_image_features, cur_new_input_embeds[image_start_token_pos + num_patches + 1:]), dim=0)
+                    multi_iamge_index+=1
 
-                        # for video and multi image
-                        try:
-                            if (cur_input_ids == vision_tower.config.vi_start_token).sum() != (cur_input_ids == vision_tower.config.vi_end_token).sum():
-                                raise ValueError("The number of vi_start_token and vi_end_token should be the same")
-                            video_start_tokens = torch.where(cur_input_ids == vision_tower.config.vi_start_token)[0]
-                            num_frame = frame_image_features.shape[0]
-                            assert (cur_input_ids == vision_tower.config.vi_frame_token).sum() == num_frame
-                            cur_video_input_embeds = cur_new_input_embeds.clone() # to save the new embed
-                            for video_start_token_pos in video_start_tokens: #this loop is for multi_image in one piece
-                                frame_image_features = frame_image_features.to(device=cur_input_embeds.device)
-                                if cur_input_ids[video_start_token_pos + num_frame + 1] != vision_tower.config.vi_end_token:
-                                    raise ValueError("Seems that the image is cut.")
-                                cur_video_input_embeds = torch.cat((cur_video_input_embeds[:video_start_token_pos+1], frame_image_features, cur_video_input_embeds[video_start_token_pos + num_frame + 1:]), dim=0)
-                        except:
-                            cur_video_input_embeds = cur_new_input_embeds.clone()
-                        new_input_embeds.append(cur_video_input_embeds)
-                        cur_image_idx += 1
-
-                    else:
-                        cur_image_features = image_features[cur_image_idx]
-                        num_patches = cur_image_features.shape[0]
-                        if (cur_input_ids == vision_tower.config.im_start_token).sum() != (cur_input_ids == vision_tower.config.im_end_token).sum():
-                            raise ValueError("The number of im_start_token and im_end_token should be the same")
-                        image_start_tokens = torch.where(cur_input_ids == vision_tower.config.im_start_token)[0]
-                        for image_start_token_pos in image_start_tokens:
-                            cur_image_features = image_features[cur_image_idx].to(device=cur_input_embeds.device)
-                            num_patches = cur_image_features.shape[0]
-                            if cur_input_ids[image_start_token_pos + num_patches + 1] != vision_tower.config.im_end_token:
-                                raise ValueError("Seems that the image is cut.")
-                            cur_new_input_embeds = torch.cat((cur_input_embeds[:image_start_token_pos+1], cur_image_features, cur_input_embeds[image_start_token_pos + num_patches + 1:]), dim=0)
-                            cur_image_idx += 1
-                        new_input_embeds.append(cur_new_input_embeds)
-                else:
-                    cur_image_features = image_features[cur_image_idx]
-                    num_patches = cur_image_features.shape[0]
-                    if (cur_input_ids == vision_tower.config.im_patch_token).sum() != num_patches:
-                        raise ValueError("The number of im_patch_token should be the same as the number of patches")
-                    masked_indices = torch.where(cur_input_ids == vision_tower.config.im_patch_token)[0]
-                    mask_index_start = masked_indices[0]
-                    if (masked_indices != torch.arange(mask_index_start, mask_index_start+num_patches, device=masked_indices.device, dtype=masked_indices.dtype)).any():
-                        raise ValueError("The im_patch_token should be continuous")
-                    cur_new_input_embeds = torch.cat((cur_input_embeds[:mask_index_start], cur_image_features, cur_input_embeds[mask_index_start+num_patches:]), dim=0)
-                    new_input_embeds.append(cur_new_input_embeds)
+                try:
+                    if (cur_input_ids == vision_tower.config.vi_start_token).sum() != (cur_input_ids == vision_tower.config.vi_end_token).sum():
+                        raise ValueError("The number of vi_start_token and vi_end_token should be the same")
+                    video_start_tokens = torch.where(cur_input_ids == vision_tower.config.vi_start_token)[0]
+                    num_frame = frame_image_features.shape[0]
+                    assert (cur_input_ids == vision_tower.config.vi_frame_token).sum() == num_frame
+                    cur_video_input_embeds = cur_new_input_embeds.clone() # to save the new embed
+                    for video_start_token_pos in video_start_tokens: #this loop is for multi_image in one piece
+                        frame_image_features = frame_image_features.to(device=cur_input_embeds.device)
+                        if cur_input_ids[video_start_token_pos + num_frame + 1] != vision_tower.config.vi_end_token:
+                            raise ValueError("Seems that the image is cut.")
+                        cur_video_input_embeds = torch.cat((cur_video_input_embeds[:video_start_token_pos+1], frame_image_features, cur_video_input_embeds[video_start_token_pos + num_frame + 1:]), dim=0)
+                except:
+                    cur_video_input_embeds = cur_new_input_embeds.clone()
+                new_input_embeds.append(cur_video_input_embeds)
+                cur_image_idx += 1
             inputs_embeds = torch.stack(new_input_embeds, dim=0)
 
         return super(ValleyLlamaModel, self).forward(
@@ -324,8 +278,7 @@ class ValleyLlamaForCausalLM(LlamaForCausalLM):
         )
         return model_inputs
 
-    def initialize_vision_tokenizer(self, mm_use_im_start_end, tokenizer, device,
-                                    tune_mm_mlp_adapter=False, pretrain_mm_mlp_adapter=None):
+    def initialize_vision_tokenizer(self, mm_use_im_start_end, tokenizer, pretrain_mm_mlp_adapter=None):
         vision_config = self.get_model().vision_tower.config
         vision_config.use_im_start_end = mm_use_im_start_end
         tokenizer.add_tokens([DEFAULT_IMAGE_PATCH_TOKEN], special_tokens=True)
@@ -350,13 +303,6 @@ class ValleyLlamaForCausalLM(LlamaForCausalLM):
                 input_embeddings[-num_new_tokens:] = input_embeddings_avg
                 output_embeddings[-num_new_tokens:] = output_embeddings_avg
 
-            if tune_mm_mlp_adapter:
-                self.get_model().orig_embeds_params = [self.get_input_embeddings().weight.data.clone().to(device=device)]
-                for p in self.get_input_embeddings().parameters():
-                    p.requires_grad = True
-                for p in self.get_output_embeddings().parameters():
-                    p.requires_grad = False
-
             if pretrain_mm_mlp_adapter and num_new_tokens > 0:
                 mm_projector_weights = torch.load(pretrain_mm_mlp_adapter, map_location='cpu')
                 embed_tokens_weight = mm_projector_weights['model.embed_tokens.weight']
@@ -370,5 +316,5 @@ class ValleyLlamaForCausalLM(LlamaForCausalLM):
 
         vision_config.im_patch_token = tokenizer.convert_tokens_to_ids([DEFAULT_IMAGE_PATCH_TOKEN])[0]
 
-AutoConfig.register("Valley", ValleyConfig)
+AutoConfig.register("valley", ValleyConfig)
 AutoModelForCausalLM.register(ValleyConfig, ValleyLlamaForCausalLM)
