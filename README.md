@@ -18,7 +18,7 @@ The online demo is no longer available, because we released the code for offline
 **Usage and License Notices**: The data, code and checkpoint is intended and licensed for research use only. They are also restricted to uses that follow the license agreement of LLaMA, Vicuna and GPT-4. The dataset is CC BY NC 4.0 (allowing only non-commercial use) and models trained using the dataset should not be used outside of research purposes.
 
 ## Release
-- [8/7]  🫧 We released [Valley2-7b](https://huggingface.co/luoruipu1/Valley2-7b), It replaces Vicuna with Llama 2.
+- [8/7]  🔥 We released [Valley2-7b](https://huggingface.co/luoruipu1/Valley2-7b), It replaces Vicuna with Llama 2.
 - [7/23] 🫧 We modified the our training code to make it easier to train valley and also support the training of lora.
 - [7/5]  🫧 Release training code for valley, and upload our pretraining data 
 - [6/21] 🫧 upload offline demo code.
