@@ -31,7 +31,7 @@ The online demo is no longer available, because we released the code for offline
 - ~~Release inference code~~
 - ~~Upload weight of **Valley-v1** and build a share link demo~~
 - ~~Upload offline demo code~~
-- ~~Release 703k pretraining data and 73k instruction tuning data ~~ 
+- ~~Release 703k pretraining data and 73k instruction tuning data~~ 
 - ~~Upload pretrain and tuning code~~
 - ~~Upload weight of Valley2-7B~~ and Valley-v3
 
