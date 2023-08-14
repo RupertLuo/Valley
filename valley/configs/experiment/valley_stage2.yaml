@@ -1,12 +1,12 @@
 model_name_or_path: Path/to/pretrain-valley/from/stage/1
 data_path: Path/to/finetun_data/LLaVA-Instruct-150K/llava_instruct_150k.json
 image_folder: Path/to/CoCo/train2014
-video_data_path: Path/to/videochat_instruct_11k.json
-video_folder: Path/to/videochat_instruct_11k/videos
+video_data_path: Path/to/valley_instruct_73k.json
+video_folder: Path/to/valley_instruct_73k/videos
 output_dir: Path/to/model/out/dir
 # experiment name
 project_name: valley
-
+run_name: valley_stage2
 # Whether to make the system prompt a mask in the label, and others do not mask
 only_mask_system: False
 # system prompt style

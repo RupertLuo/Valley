@@ -10,16 +10,10 @@ from transformers import AutoConfig, AutoModelForCausalLM, \
                          CLIPVisionModel, CLIPImageProcessor
 
 from transformers.modeling_outputs import BaseModelOutputWithPast, CausalLMOutputWithPast
-
-
-DEFAULT_IMAGE_TOKEN = "<image>"
-DEFAULT_IMAGE_PATCH_TOKEN = "<im_patch>"
-DEFAULT_IM_START_TOKEN = "<im_start>"
-DEFAULT_IM_END_TOKEN = "<im_end>"
-DEFAULT_VIDEO_TOKEN = "<video>"
-DEFAULT_VIDEO_FRAME_TOKEN = "<vi_frame>"
-DEFAULT_VI_START_TOKEN = "<vi_start>"
-DEFAULT_VI_END_TOKEN = "<vi_end>"
+from valley.util.data_util import load_video
+from valley.util.data_util import  KeywordsStoppingCriteria
+from tokenizers import AddedToken
+from valley.util.config import *
 
 
 class ValleyConfig(LlamaConfig):
@@ -31,16 +25,24 @@ class ValleyLlamaModel(LlamaModel):
     def __init__(self, config: LlamaConfig, mm_vision_tower=None, mm_hidden_size=None):
         super(ValleyLlamaModel, self).__init__(config)
 
+        self.patch_pooling_method = "mean"
+
         if hasattr(config, "mm_vision_tower"):
             # HACK: for FSDP
             # self.vision_tower = [CLIPVisionModel.from_pretrained(config.mm_vision_tower)]
             self.vision_tower = CLIPVisionModel.from_pretrained(config.mm_vision_tower)
-
+            
+        if hasattr(config, "use_patch_importance_pooling") and config.use_patch_importance_pooling:
+            print('using temporal linear pooling')
+            self.pooling_layer = nn.Linear(self.config.hidden_size * 256, 1)
+            self.patch_pooling_method = "temporal_importance"
         if hasattr(config, "use_mm_proj"):
             self.mm_projector = nn.Linear(config.mm_hidden_size, config.hidden_size)
             print(config.mm_hidden_size, config.hidden_size)
+
+
     def initialize_vision_modules(self, vision_tower, mm_vision_select_layer,
-                                  pretrain_mm_mlp_adapter=None, tune_mm_mlp_adapter=False):
+                                  pretrain_mm_mlp_adapter=None, use_patch_importance_pooling=False):
         self.config.mm_vision_tower = vision_tower
 
         image_processor = CLIPImageProcessor.from_pretrained(vision_tower)
@@ -50,15 +52,19 @@ class ValleyLlamaModel(LlamaModel):
         else:
             vision_tower = self.vision_tower
         vision_tower.requires_grad_(False)
-        vision_tower = vision_tower.to(torch.float16)
+        # vision_tower = vision_tower.to(torch.float16)
         self.vision_tower = vision_tower
 
         vision_config = vision_tower.config
         num_patches = (vision_config.image_size // vision_config.patch_size) ** 2
 
         self.config.use_mm_proj = True
+        self.config.use_patch_importance_pooling = use_patch_importance_pooling
         self.config.mm_hidden_size = vision_config.hidden_size
         self.config.mm_vision_select_layer = mm_vision_select_layer
+        if not hasattr(self, 'pooling_layer') and use_patch_importance_pooling:
+            self.pooling_layer = nn.Linear(self.config.hidden_size * 256, 1)
+            self.patch_pooling_method = "temporal_importance"
 
         if not hasattr(self, 'mm_projector'):
             self.mm_projector = nn.Linear(vision_config.hidden_size, self.config.hidden_size)
@@ -72,7 +78,16 @@ class ValleyLlamaModel(LlamaModel):
             image_token_len=num_patches,
             vision_config=vision_config
         )
-
+    def text_importance_pooling(self,patch_feature):# 8, 256, 5120
+        # print(patch_feature.shape)
+        patch_feature_flatten = torch.flatten(patch_feature,start_dim=1)
+        score = nn.functional.softmax(self.pooling_layer(patch_feature_flatten), dim=0)
+        # print(score.shape)
+        score = score.unsqueeze(2)
+        patch_feature = score*patch_feature
+        patch_feature = torch.sum(patch_feature, dim=0)
+        return patch_feature
+        
     def forward(
         self,
         input_ids: torch.LongTensor = None,
@@ -138,10 +153,17 @@ class ValleyLlamaModel(LlamaModel):
                     continue
 
                 cur_image_features = image_features[cur_image_idx]
-                mean_image_features = torch.mean(cur_image_features[:,1:,:],dim=0) # 256 , 4096
+                # patch pooling method ( mean, max, text relative pooling )
+                if self.patch_pooling_method == 'mean':
+                    mean_image_features = torch.mean(cur_image_features[:,1:,:],dim=0) # 256 , 4096
+                elif self.patch_pooling_method == 'max':
+                    mean_image_features = torch.max(cur_image_features[:,1:,:],dim=0)[0] # 256 , 4096
+                elif self.patch_pooling_method == 'temporal_importance':
+                    mean_image_features = self.text_importance_pooling(cur_image_features[:,1:,:]) # 256 , 4096
+                    
                 frame_image_features = cur_image_features[:,0,:]# frame_length, 4096
                 num_patches = mean_image_features.shape[0]
-                
+                # print(mean_image_features.shape)
 
                 if (cur_input_ids == vision_tower.config.im_start_token).sum() != (cur_input_ids == vision_tower.config.im_end_token).sum():
                     raise ValueError("The number of im_start_token and im_end_token should be the same")
@@ -278,43 +300,92 @@ class ValleyLlamaForCausalLM(LlamaForCausalLM):
         )
         return model_inputs
 
-    def initialize_vision_tokenizer(self, mm_use_im_start_end, tokenizer, pretrain_mm_mlp_adapter=None):
+    def initialize_vision_tokenizer(self, tokenizer):
         vision_config = self.get_model().vision_tower.config
-        vision_config.use_im_start_end = mm_use_im_start_end
-        tokenizer.add_tokens([DEFAULT_IMAGE_PATCH_TOKEN], special_tokens=True)
+        vision_config.use_im_start_end = True
+        tokenizer.add_tokens([DEFAULT_IMAGE_PATCH_TOKEN,DEFAULT_VIDEO_FRAME_TOKEN], special_tokens=True)
         self.resize_token_embeddings(len(tokenizer))
 
-        if mm_use_im_start_end:
-            num_new_tokens = tokenizer.add_tokens([DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN], special_tokens=True)
-            self.resize_token_embeddings(len(tokenizer))
-            vision_config.im_start_token, vision_config.im_end_token = tokenizer.convert_tokens_to_ids([DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN])
-            vision_config.vi_start_token, vision_config.vi_end_token = tokenizer.convert_tokens_to_ids([DEFAULT_VI_START_TOKEN, DEFAULT_VI_END_TOKEN])
-            vision_config.vi_frame_token = tokenizer.convert_tokens_to_ids(DEFAULT_VIDEO_FRAME_TOKEN)
-            
-            if num_new_tokens > 0:
-                input_embeddings = self.get_input_embeddings().weight.data
-                output_embeddings = self.get_output_embeddings().weight.data
+        num_new_tokens = tokenizer.add_tokens([DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN, DEFAULT_VI_START_TOKEN,DEFAULT_VI_END_TOKEN], special_tokens=True)
+        self.resize_token_embeddings(len(tokenizer))
 
-                input_embeddings_avg = input_embeddings[:-num_new_tokens].mean(
-                    dim=0, keepdim=True)
-                output_embeddings_avg = output_embeddings[:-num_new_tokens].mean(
-                    dim=0, keepdim=True)
+        vision_config.im_start_token, vision_config.im_end_token = tokenizer.convert_tokens_to_ids([DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN])
+        vision_config.vi_start_token, vision_config.vi_end_token = tokenizer.convert_tokens_to_ids([DEFAULT_VI_START_TOKEN, DEFAULT_VI_END_TOKEN])
+        vision_config.vi_frame_token = tokenizer.convert_tokens_to_ids(DEFAULT_VIDEO_FRAME_TOKEN)
+        
+        if num_new_tokens > 0:
+            input_embeddings = self.get_input_embeddings().weight.data
+            output_embeddings = self.get_output_embeddings().weight.data
 
-                input_embeddings[-num_new_tokens:] = input_embeddings_avg
-                output_embeddings[-num_new_tokens:] = output_embeddings_avg
+            input_embeddings_avg = input_embeddings[:-num_new_tokens].mean(
+                dim=0, keepdim=True)
+            output_embeddings_avg = output_embeddings[:-num_new_tokens].mean(
+                dim=0, keepdim=True)
 
-            if pretrain_mm_mlp_adapter and num_new_tokens > 0:
-                mm_projector_weights = torch.load(pretrain_mm_mlp_adapter, map_location='cpu')
-                embed_tokens_weight = mm_projector_weights['model.embed_tokens.weight']
-                # assert num_new_tokens == 2
-                if input_embeddings.shape == embed_tokens_weight.shape:
-                    input_embeddings[-num_new_tokens:] = embed_tokens_weight[-num_new_tokens:]
-                elif embed_tokens_weight.shape[0] == num_new_tokens:
-                    input_embeddings[-num_new_tokens:] = embed_tokens_weight
-                else:
-                    raise ValueError(f"Unexpected embed_tokens_weight shape. Pretrained: {embed_tokens_weight.shape}. Current: {input_embeddings.shape}. Numer of new tokens: {num_new_tokens}.")
+            input_embeddings[-num_new_tokens:] = input_embeddings_avg
+            output_embeddings[-num_new_tokens:] = output_embeddings_avg
 
         vision_config.im_patch_token = tokenizer.convert_tokens_to_ids([DEFAULT_IMAGE_PATCH_TOKEN])[0]
 
+    def build_inputs(self,tokenizer, messages):
+        prompt = ''
+        for m in messages:
+            if m['role'] == 'system':
+                prompt += m['content'] +'\n\n' + '###'
+            elif m['role'] == 'user':
+                replace_token = DEFAULT_IM_START_TOKEN + DEFAULT_IMAGE_PATCH_TOKEN * 256 + \
+                DEFAULT_IM_END_TOKEN + DEFAULT_VI_START_TOKEN + \
+                DEFAULT_VIDEO_FRAME_TOKEN * 8 + DEFAULT_VI_END_TOKEN
+                if '<video>'  in m['content'] or '<image>' in m['content']:
+                    message = m['content'].replace('<video>',replace_token)
+                    message = message.replace('<image>',replace_token)
+                    prompt += ' ' + 'Human' + ": " + message+' \n' + '###'
+            elif m['role'] == 'assistent':
+                prompt += ' ' + 'Assistent' + ": " + m['content']+' \n' + '###'
+            else:
+                raise ValueError("Role is only suport \"assistent\", \"human\" and \"system\".")
+        if DEFAULT_IM_START_TOKEN not in prompt:
+            raise ValueError("You need to specify the <video> token in the query")
+        tokenizer.padding_side = 'left'
+        input_id = tokenizer([prompt], padding=True)
+        return input_id
+    
+    def process_response(self,outputs):
+        output = []
+        for i, out in enumerate(outputs):
+            while True:
+                cur_len = len(out)
+                out = out.strip()
+                for pattern in ['###', 'Assistant:', 'Response:', 'Valley:']:
+                    if out.startswith(pattern):
+                        out = out[len(pattern):].strip()
+                if len(out) == cur_len:
+                    break
+            try:
+                index = out.index('###')
+            except ValueError:
+                out += '###'
+                index = out.index("###")
+            out = out[:index].strip()
+            output.append(out)
+        return output
+
+    @torch.no_grad()
+    def completion(self, tokenizer, video: str, message: list, gen_kwargs:dict, device):
+        inputs = self.build_inputs(tokenizer, message)
+        input_ids = torch.as_tensor(inputs.input_ids).to(device)
+        images = load_video(video)
+        images = images.permute(1, 0, 2, 3)
+        images = images.unsqueeze(0).half().to(device)
+        stopping_criteria = KeywordsStoppingCriteria(['###'], tokenizer, input_ids)
+        output_ids = self.generate(input_ids = input_ids, images = images, stopping_criteria=[stopping_criteria],**gen_kwargs)
+        input_token_len = input_ids.shape[1]
+        n_diff_input_output = (input_ids != output_ids[:, :input_token_len]).sum().item()
+        if n_diff_input_output > 0:
+            print(f'[Warning] {n_diff_input_output} output_ids are not the same as the input_ids')
+        outputs = tokenizer.batch_decode(output_ids[:, input_token_len:], skip_special_tokens=True)
+        response = self.process_response(outputs)
+        return response
+    
 AutoConfig.register("valley", ValleyConfig)
 AutoModelForCausalLM.register(ValleyConfig, ValleyLlamaForCausalLM)

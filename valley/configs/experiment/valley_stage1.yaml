@@ -5,7 +5,8 @@ video_data_path: Path/to/webvid_703K/chat.json
 video_folder: Path/to/webvid_703K/videos
 output_dir: Path/to/model/out/dir
 # experiment name
-project_name: valley2
+project_name: valley
+run_name: valley_stage1
 
 # Whether to make the system prompt a mask in the label, and others do not mask
 only_mask_system: False
