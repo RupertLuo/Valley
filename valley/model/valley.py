@@ -6,8 +6,7 @@ import torch.nn.functional as F
 from torch.nn import CrossEntropyLoss
 
 from transformers import AutoConfig, AutoModelForCausalLM, \
-                         LlamaConfig, LlamaModel, LlamaForCausalLM, \
-                         CLIPVisionModel, CLIPImageProcessor
+                         LlamaConfig, LlamaModel, LlamaForCausalLM
 
 from transformers.modeling_outputs import BaseModelOutputWithPast, CausalLMOutputWithPast
 from valley.util.data_util import load_video
@@ -30,6 +29,12 @@ class ValleyLlamaModel(LlamaModel):
         if hasattr(config, "mm_vision_tower"):
             # HACK: for FSDP
             # self.vision_tower = [CLIPVisionModel.from_pretrained(config.mm_vision_tower)]
+            if 'chinese' in config.mm_vision_tower:
+                from transformers import ChineseCLIPVisionModel as CLIPVisionModel
+                from transformers import ChineseCLIPImageProcessor as CLIPImageProcessor
+            else:
+                from transformers import CLIPVisionModel, CLIPImageProcessor
+
             self.vision_tower = CLIPVisionModel.from_pretrained(config.mm_vision_tower)
             
         if hasattr(config, "use_patch_importance_pooling") and config.use_patch_importance_pooling:

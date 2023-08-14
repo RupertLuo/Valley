@@ -44,8 +44,8 @@ def main(args):
     model.eval()
 
     message = [ {"role":'system','content':args.system_prompt if args.system_prompt  else DEFAULT_SYSTEM},
-                {"role":"user", "content": 'Hi!'},
-                {"role":"assistent", "content": 'Hi there! How can I help you today?'},
+                # {"role":"user", "content": 'Hi!'},
+                # {"role":"assistent", "content": 'Hi there! How can I help you today?'},
                 {"role":"user", "content": args.query}]
     
     gen_kwargs = dict(
@@ -58,11 +58,11 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model-name", type=str, default="../../checkpoints/stable-valley-13b-v3/")
-    parser.add_argument("--query", type=str, required=False,default="Describe the video in detail.\n<video>")
+    parser.add_argument("--model-name", type=str, default="/mnt/bn/zhaoziwang/guonei_llava_git_code/upload_valey/chinese_valley_v1/")
+    parser.add_argument("--query", type=str, required=False,default="描述这个视频.\n<video>")
     parser.add_argument("--video-file", type=str, required=False,default="valley/serve/examples/videos/dc52388394cc9f692d16a95d9833ca07.mp4")
     parser.add_argument("--vision-tower", type=str, default=None)
-    parser.add_argument("--system-prompt", type=str, default="")
+    parser.add_argument("--system-prompt", type=str, default="你是字节跳动训练的大型语言视觉助手 Chinese-Valley。你能够理解用户提供的视觉内容或视频，并使用自然语言协助用户完成各种任务。请仔细按照人类的指令进行回答，并详细解释你的答案。")
     args = parser.parse_args()
     main(args)
 
