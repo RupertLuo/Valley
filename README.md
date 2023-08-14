@@ -18,7 +18,10 @@ The online demo is no longer available, because we released the code for offline
 **Usage and License Notices**: The data, code and checkpoint is intended and licensed for research use only. They are also restricted to uses that follow the license agreement of LLaMA, Vicuna and GPT-4. The dataset is CC BY NC 4.0 (allowing only non-commercial use) and models trained using the dataset should not be used outside of research purposes.
 
 ## Release
-- [7/23] 🫧We modified the code of our training model to make it easier to train valley and support the training of lora and llama2
+- [8/10] 🔥 Realeased pretrain stage weight of 13b and 7b ,[Valley2-7b-pretrain](https://huggingface.co/luoruipu1/Valley2-7b-pretrain/), [valley-13b-pretrain](https://huggingface.co/luoruipu1/valley-13b-pretrain)
+- [8/8] 🔥 We released the self-collected and expanded instruction fine-tuning dataset ([Valley-Instruct-73k](https://huggingface.co/datasets/luoruipu1/Valley-Instruct-73k)).
+- [8/7]  🔥 We released [Valley2-7b](https://huggingface.co/luoruipu1/Valley2-7b), It replaces Vicuna with Llama 2.
+- [7/23] 🫧 We modified the our training code to make it easier to train valley and also support the training of lora.
 - [7/5]  🫧 Release training code for valley, and upload our pretraining data 
 - [6/21] 🫧 upload offline demo code.
 - [6/14] 🫧 build a share link ~[[demo]()]~.
@@ -29,9 +32,9 @@ The online demo is no longer available, because we released the code for offline
 - ~~Release inference code~~
 - ~~Upload weight of **Valley-v1** and build a share link demo~~
 - ~~Upload offline demo code~~
-- ~~Release 703k pretraining data~~ and 40k instruction tuning data 
+- ~~Release 703k pretraining data and 73k instruction tuning data~~ 
 - ~~Upload pretrain and tuning code~~
-- Upload weight of Valley-GLM-6B and Valley-v3
+- ~~Upload weight of Valley2-7B~~ and Valley-v3
 
 ## Install
 1. Clone this repository and navigate to Valley folder
@@ -133,7 +136,7 @@ Inspired by LLAVA, we adopt a two-stage training method. The pre-training stage 
 We modified our code for training valley and managed the model hyperparameters with yaml files. Run the following two scripts to perform valley training.
 
 ### Pretrain
-
+The llm backbone that currently supports pre-training is Llama(7b,13b), vicuna(7b,13b), stable-vicuna(13b), Llama2(chat-7b, chat-13b). You need to download these open source language model weights yourself and convert them to the huggingface format. 
 ```shell
 bash valley/train/train.sh valley/configs/experiment/valley_stage1.yaml
 ```
