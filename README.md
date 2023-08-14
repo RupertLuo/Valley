@@ -131,7 +131,7 @@ response = model.completion(tokenizer, args.video_file, message, gen_kwargs, dev
 
 ## Train Valley Step By Step
 
-Inspired by LLAVA, we adopt a two-stage training method. The pre-training stage uses the [Valley-webvid2M-Pretrain-703K](https://huggingface.co/datasets/luoruipu1/Valley-webvid2M-Pretrain-703K) and [LLaVA-CC3M-Pretrain-595K](https://huggingface.co/datasets/liuhaotian/LLaVA-Pretrain).  And fine-tune stage uses [LLaVA-instruct-150K](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K) ,  [VideoChat-instruct-11K](https://github.com/OpenGVLab/InternVideo/tree/main/Data/instruction_data)  and Valley-instruct-73k
+Inspired by LLAVA, we adopt a two-stage training method. The pre-training stage uses the [Valley-webvid2M-Pretrain-703K](https://huggingface.co/datasets/luoruipu1/Valley-webvid2M-Pretrain-703K) and [LLaVA-CC3M-Pretrain-595K](https://huggingface.co/datasets/liuhaotian/LLaVA-Pretrain).  And fine-tune stage uses [LLaVA-instruct-150K](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K) ,  [VideoChat-instruct-11K](https://github.com/OpenGVLab/InternVideo/tree/main/Data/instruction_data)  and [Valley-Instruct-73k](https://huggingface.co/datasets/luoruipu1/Valley-Instruct-73k)
 
 We modified our code for training valley and managed the model hyperparameters with yaml files. Run the following two scripts to perform valley training.
 
