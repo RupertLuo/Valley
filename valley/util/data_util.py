@@ -62,12 +62,19 @@ def safe_save_model_for_hf_trainer(trainer: transformers.Trainer,
                                    output_dir: str):
     """Collects the state dict and dump to disk."""
     
-    if trainer.args.should_save:
-        if trainer.args.lora:
+    if trainer.args.lora:
+        if trainer.args.should_save: 
             trainer.model.save_pretrained(output_dir)
         
-        else:
-            state_dict = trainer.model.state_dict()
+    else:
+        if trainer.deepspeed:
+            print('saving deepspeed model...')
+            torch.cuda.synchronize()
+            trainer.save_model(output_dir)
+            return
+        
+        state_dict = trainer.model.state_dict()
+        if trainer.args.should_save:
             cpu_state_dict = {
                 key: value.cpu()
                 for key, value in state_dict.items()
