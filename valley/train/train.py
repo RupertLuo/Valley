@@ -22,6 +22,8 @@ class ModelArguments:
     pretrain_mm_mlp_adapter: Optional[str] = field(default=None)
     mm_use_im_start_end: bool = field(default=False)
     tune_llm_layer: str=field(default= None)
+    patch_pooling_method: str=field(default='mean')
+    use_patch_importance_pooling: bool=field(default=False)
 
 
 @dataclass
@@ -36,6 +38,7 @@ class DataArguments:
     is_multimodal: bool = False
     sep_image_conv_front: bool = False
     image_token_len: int = 0
+    eval_num: int = 400
     image_folder: Optional[str] = field(default=None)
     video_folder: Optional[str] = field(default=None)
     fashion_image_folder: Optional[str] = field(default=None)
@@ -50,14 +53,22 @@ class DataArguments:
     project_name: str = field(default='valley')
 
 @dataclass
-class TrainingArguments(transformers.TrainingArguments):
+class TrainingArguments(transformers.Seq2SeqTrainingArguments):
     cache_dir: Optional[str] = field(default=None)
     optim: str = field(default="adamw_torch")
     remove_unused_columns: bool = field(default=False)
     freeze_mm_mlp_adapter: bool = field(default=False)
     freeze_backbone: bool = field(default=False)
     tune_mm_mlp_adapter: bool = field(default=False)
+    tune_patch_pooling_matrix: bool = field(default=False)
     force_fsdp: bool = field(default=False)
+    vis_lora: bool = field(default=False)
+    lora_lr: float = field(default=None)
+    lora_save_strategy: str=field(default = 'no')
+    prediction_file_name: Optional[str] = field(
+        default=None,
+        metadata={"help": ("The `prediction_file_name` to be use for output results")},
+    )
     model_max_length: int = field(
         default=512,
         metadata={
@@ -72,7 +83,7 @@ class TrainingArguments(transformers.TrainingArguments):
 def train(args):
     
     parser = transformers.HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
-    model_args, data_args, training_args = parser.parse_yaml_file(args.conf)
+    model_args, data_args, training_args = parser.parse_yaml_file(args.conf,allow_extra_keys=True)
     training_args.learning_rate = float(training_args.learning_rate)
     os.environ['WANDB_PROJECT'] = data_args.project_name
 
@@ -128,7 +139,7 @@ def train(args):
         model.config.mm_use_im_start_end = data_args.mm_use_im_start_end = model_args.mm_use_im_start_end
         vision_config.use_im_start_end = training_args.use_im_start_end = model_args.mm_use_im_start_end
         model.config.sep_image_conv_front = data_args.sep_image_conv_front
-        model.initialize_vision_tokenizer(mm_use_im_start_end=model_args.mm_use_im_start_end, tokenizer=tokenizer, pretrain_mm_mlp_adapter=model_args.pretrain_mm_mlp_adapter)
+        model.initialize_vision_tokenizer(tokenizer=tokenizer)
 
 
     if training_args.freeze_backbone:
@@ -153,7 +164,7 @@ def train(args):
             p.requires_grad = True
         for p in model.get_output_embeddings().parameters():
             p.requires_grad = False
-
+    
     model.config.freeze_mm_mlp_adapter = training_args.freeze_mm_mlp_adapter
     if training_args.freeze_mm_mlp_adapter:
         for p in model.get_model().mm_projector.parameters():

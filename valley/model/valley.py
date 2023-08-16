@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from torch.nn import CrossEntropyLoss
 
 from transformers import AutoConfig, AutoModelForCausalLM, \
-                         LlamaConfig, LlamaModel, LlamaForCausalLM
+                         LlamaConfig, LlamaModel, LlamaForCausalLM, CLIPImageProcessor, CLIPVisionModel
 
 from transformers.modeling_outputs import BaseModelOutputWithPast, CausalLMOutputWithPast
 from valley.util.data_util import load_video
