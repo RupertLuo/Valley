@@ -50,18 +50,36 @@ conda activate valley
 pip install --upgrade pip 
 pip install -e .
 ```
+## Data
+In the pretrain stage, we use the data from [LLaVA-CC3M-Pretrain-595K](https://huggingface.co/datasets/liuhaotian/LLaVA-Pretrain) and the [Valley-webvid2M-Pretrain-703K](https://huggingface.co/datasets/luoruipu1/Valley-webvid2M-Pretrain-703K) collected and filtered by ourselves. The acquisition of picture and video data can refer to [LLAVA]( https://llava-vl.github.io/) and [Webvid](https://github.com/m-bain/webvid) 
+
+In the finetune stage, we use the data from [LLaVA-instruct-150K](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K), [VideoChat-instruct-11K](https://github.com/OpenGVLab/InternVideo/tree/main/Data/instruction_data) and our self-collected [Valley-Instruct-73k](https://huggingface.co/datasets/luoruipu1/Valley-Instruct-73k). For the images and videos of the first two parts, please refer to their official website. Here we describe how we obtain the data we collect ourselves ([Valley-Instruct-73k](https://huggingface.co/datasets/luoruipu1/Valley-Instruct-73k)).
+
+1. Part of Valley-Instruct-73k is collected from the open source dataset [VATEX](https://eric-xw.github.io/vatex-website/explore.html), which contains about 20k downloadable videos. You can download the original annotation file ("ava_vatex_training_v1.0.json") from its official website. Its video comes from YouTube, and now there are many open source tools that can download YouTube videos by video id. We provide a tool to download its videos, the tool is located in the [Crawler](./Crawler/) folder, please read the tool's [Readme.md](./Crawler/README.md) to use it.
+2. Another part of Valley-Instruct-73k is collected from a video site, named [JukinMedia](https://www.jukinmedia.com/). It contains a wide variety of videos.  We also provide a tool to download jukinmedia videos and its high quality descriptions, the tool is located in the [Crawler](./Crawler/) folder, please read the tool's [Readme.md](./Crawler/README.md) to use it.
+
+
 ## ValleyWeight
-We release [Valley]() delta weights weights to comply with the LLaMA model license. You can apply this delta weights to original LLaMA model weight through the instructions blew:
+### Valley 13b v1
+We release [Valley-13b-v1](https://huggingface.co/luoruipu1/valley-13b-v1-delta) delta weights weights to comply with the LLaMA model license. You can apply this delta weights to original LLaMA model weight through the instructions blew:
 
 1. Get the original LLaMA weights in the huggingface format by following the instructions structions [here](https://huggingface.co/docs/transformers/main/model_doc/llama).
 2. Use the following scripts to get Valley weights by applying our delta ([13b-v1](https://huggingface.co/luoruipu1/valley-13b-v1-delta)).
-### Valley 13b v1
 ```bash
 python3 valley/model/apply_delta.py \
     --base /path/to/llama-13b \
     --target /output/path/to/Valley-13B-v1 \
     --delta /path/to/valley-13b-v1-delta
 ```
+### Valley2 7b 
+For the Valley2-7b model, we provide direct weights, the address is [here](https://huggingface.co/luoruipu1/Valley2-7b)
+
+### Chinese Valley 13b
+We now support **Chinese valley**. We use "BelleGroup/BELLE-LLaMA-EXT-13B" as LLM backbone, and  "OFA-Sys/chinese-clip-vit-large-patch14" for visual backbone, the address is [here](https://huggingface.co/Zhaoziwang/chinese_valley_v1).
+
+### Pretrain Weight
+We provide [13b](https://huggingface.co/luoruipu1/valley-13b-pretrain) and [7b](https://huggingface.co/luoruipu1/Valley2-7b-pretrain/) pre-trained weights so that people can fine-tune directly on our pre-trained weights with their own fine-tuning data.
+
 ## Web UI
 <p align="center">
     <img src="valley/logo/demo.GIF" width="100%"><br>
