@@ -146,10 +146,7 @@ class ValleyLlamaModel(LlamaModel):
 
 
             if type(images) is list:
-                if self.multi_image:
-                    image_features = [self.mm_projector(image_feature) for image_feature in image_features]
-                else:
-                    image_features = [self.mm_projector(image_feature)[0] for image_feature in image_features]
+                image_features = [self.mm_projector(image_feature) for image_feature in image_features]
             else:
                 image_features = self.mm_projector(image_features)
 

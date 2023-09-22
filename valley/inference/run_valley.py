@@ -49,7 +49,7 @@ def main(args):
                 {"role":"user", "content": args.query}]
     
     gen_kwargs = dict(
-        do_sample=True,
+        do_sample=False,
         temperature=0.2,
         max_new_tokens=1024,
     )
@@ -58,8 +58,8 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model-name", type=str, default="./chinese_valley_v1/")
-    parser.add_argument("--query", type=str, required=False,default="Describe this video. \n<video>")
+    parser.add_argument("--model-name", type=str, default="../../checkpoints/stable-valley-13b-v1")
+    parser.add_argument("--query", type=str, required=False,default="Describe this video concisely.\n<video>")
     parser.add_argument("--video-file", type=str, required=False,default="valley/serve/examples/videos/dc52388394cc9f692d16a95d9833ca07.mp4")
     parser.add_argument("--vision-tower", type=str, default=None)
     parser.add_argument("--system-prompt", type=str, default="")
