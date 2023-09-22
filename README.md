@@ -18,7 +18,7 @@ The online demo is no longer available, because we released the code for offline
 **Usage and License Notices**: The data, code and checkpoint is intended and licensed for research use only. They are also restricted to uses that follow the license agreement of LLaMA, Vicuna and GPT-4. The dataset is CC BY NC 4.0 (allowing only non-commercial use) and models trained using the dataset should not be used outside of research purposes.
 
 ## Release
-- [8/14] 🔥 We released the Chinese version of Valley! Now its weight is available at [Chinese-Valley-V1](https://huggingface.co/Zhaoziwang/chinese_valley_v1).
+- [8/14] 🔥 We released the Chinese version of Valley! Now its 7B and 13b weights are available at [Chinese-Valley7B-V1](https://huggingface.co/Zhaoziwang/chinese_valley7b_v1) and [Chinese-Valley13B-V1](https://huggingface.co/Zhaoziwang/chinese_valley13b_v1).
 - [8/10] 🔥 Realeased pretrain stage weight of 13b and 7b ,[Valley2-7b-pretrain](https://huggingface.co/luoruipu1/Valley2-7b-pretrain/), [valley-13b-pretrain](https://huggingface.co/luoruipu1/valley-13b-pretrain).
 - [8/8] 🔥 We released the self-collected and expanded instruction fine-tuning dataset ([Valley-Instruct-73k](https://huggingface.co/datasets/luoruipu1/Valley-Instruct-73k)).
 - [8/7]  🔥 We released [Valley2-7b](https://huggingface.co/luoruipu1/Valley2-7b), It replaces Vicuna with Llama 2.
@@ -111,7 +111,7 @@ python3 inference/run_valley.py --model-name [PATH TO VALLEY WEIGHT] --video_fil
 
 Inference Chinese Valley
 ```
-python3 inference/run_valley.py --model-name [PATH TO CHINESE VALLEY WEIGHT] --video_file [PATH TO VIDEO] --quary [YOUR QUERY ON THE VIDEO] --system-prompt "你是字节跳动训练的大型语言视觉助手 Chinese-Valley。你能够理解用户提供的视觉内容或视频，并使用自然语言协助用户完成各种任务。请仔细按照人类的指令进行回答，并详细解释你的答案。"
+python3 inference/run_valley.py --model-name [PATH TO CHINESE VALLEY WEIGHT] --video_file [PATH TO VIDEO] --quary [YOUR QUERY ON THE VIDEO] --system-prompt "你是大型语言视觉助手 Chinese-Valley。你能够理解用户提供的视觉内容或视频，并使用自然语言协助用户完成各种任务。请仔细按照人类的指令进行回答，并详细解释你的答案。"
 ```
 
 Inference in code
