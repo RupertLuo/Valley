@@ -33,7 +33,7 @@ The online demo is no longer available, because we released the code for offline
 - ~~Release inference code~~
 - ~~Upload weight of **Valley-v1** and build a share link demo~~
 - ~~Upload offline demo code~~
-- ~~Release 703k pretraining data and 73k instruction tuning data~~ 
+- ~~Release 703k pretraining data and 73k instruction tuning data~~
 - ~~Upload pretrain and tuning code~~
 - ~~Upload weight of Valley2-7B~~ and Valley-v3
 
@@ -47,11 +47,11 @@ cd Valley
 ```
 conda create -n valley python=3.10 -y
 conda activate valley
-pip install --upgrade pip 
+pip install --upgrade pip
 pip install -e .
 ```
 ## Data
-In the pretrain stage, we use the data from [LLaVA-CC3M-Pretrain-595K](https://huggingface.co/datasets/liuhaotian/LLaVA-Pretrain) and the [Valley-webvid2M-Pretrain-703K](https://huggingface.co/datasets/luoruipu1/Valley-webvid2M-Pretrain-703K) collected and filtered by ourselves. The acquisition of picture and video data can refer to [LLAVA]( https://llava-vl.github.io/) and [Webvid](https://github.com/m-bain/webvid) 
+In the pretrain stage, we use the data from [LLaVA-CC3M-Pretrain-595K](https://huggingface.co/datasets/liuhaotian/LLaVA-Pretrain) and the [Valley-webvid2M-Pretrain-703K](https://huggingface.co/datasets/luoruipu1/Valley-webvid2M-Pretrain-703K) collected and filtered by ourselves. The acquisition of picture and video data can refer to [LLAVA]( https://llava-vl.github.io/) and [Webvid](https://github.com/m-bain/webvid)
 
 In the finetune stage, we use the data from [LLaVA-instruct-150K](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K), [VideoChat-instruct-11K](https://github.com/OpenGVLab/InternVideo/tree/main/Data/instruction_data) and our self-collected [Valley-Instruct-73k](https://huggingface.co/datasets/luoruipu1/Valley-Instruct-73k). For the images and videos of the first two parts, please refer to their official website. Here we describe how we obtain the data we collect ourselves ([Valley-Instruct-73k](https://huggingface.co/datasets/luoruipu1/Valley-Instruct-73k)).
 
@@ -71,7 +71,7 @@ python3 valley/model/apply_delta.py \
     --target /output/path/to/Valley-13B-v1 \
     --delta /path/to/valley-13b-v1-delta
 ```
-### Valley2 7b 
+### Valley2 7b
 For the Valley2-7b model, we provide direct weights, the address is [here](https://huggingface.co/luoruipu1/Valley2-7b)
 
 ### Chinese Valley 13b
@@ -95,7 +95,7 @@ python valley/serve/controller.py
 python valley/serve/model_worker.py --model-path /path/to/valley-13b-v1
 ```
 Ps: At present, only single card mode is supported to load the model, and at least 30G of video memory is required, so the graphics card needs at least one Tesla V100.
-#### launch a gradio demo 
+#### launch a gradio demo
 ```bash
 python valley/serve/gradio_web_server_video.py --share
 ```
@@ -115,43 +115,14 @@ python3 inference/run_valley.py --model-name [PATH TO CHINESE VALLEY WEIGHT] --v
 ```
 
 Inference in code
-```python
-from transformers import AutoTokenizer
-from valley.model.valley import ValleyLlamaForCausalLM
-def init_vision_token(model,tokenizer):
-    vision_config = model.get_model().vision_tower.config
-    vision_config.im_start_token, vision_config.im_end_token = tokenizer.convert_tokens_to_ids([DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN])
-    vision_config.vi_start_token, vision_config.vi_end_token = tokenizer.convert_tokens_to_ids([DEFAULT_VI_START_TOKEN, DEFAULT_VI_END_TOKEN])
-    vision_config.vi_frame_token = tokenizer.convert_tokens_to_ids(DEFAULT_VIDEO_FRAME_TOKEN)
-    vision_config.im_patch_token = tokenizer.convert_tokens_to_ids([DEFAULT_IMAGE_PATCH_TOKEN])[0]
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-# input the query
-query = "Describe the video concisely."
-# input the systemprompt
-system_prompt = "You are Valley, a large language and vision assistant trained by ByteDance. You are able to understand the visual content or video that the user provides, and assist the user with a variety of tasks using natural language. Follow the instructions carefully and explain your answers in detail."
+- You can utilize the code located at [valley/inference/run_valley_llamma_v2.py](valley/inference/run_valley_llamma_v2.py) to run inference on a video. All that's required is a video path
 
-model_path = THE MODEL PATH
-model = ValleyLlamaForCausalLM.from_pretrained(model_path, torch_dtype=torch.float16)
-tokenizer = AutoTokenizer.from_pretrained(model_path)
-init_vision_token(model,tokenizer)
-model = model.to(device)
-model.eval()
-
-# we support openai format input
-message = [ {"role":'system','content':system_prompt},
-            {"role":"user", "content": 'Hi!'},
-            {"role":"assistent", "content": 'Hi there! How can I help you today?'},
-            {"role":"user", "content": query}]
-
-gen_kwargs = dict(
-    do_sample=True,
-    temperature=0.2,
-    max_new_tokens=1024,
-)
-response = model.completion(tokenizer, args.video_file, message, gen_kwargs, device)
+```bash
+python valley/inference/run_valley_llamma_v2.py --video_file <path-to-video-file>
 ```
 
+- luoruipu1/Valley2-7b is used in the provided code.
 
 ## Train Valley Step By Step
 
@@ -160,7 +131,7 @@ Inspired by LLAVA, we adopt a two-stage training method. The pre-training stage 
 We modified our code for training valley and managed the model hyperparameters with yaml files. Run the following two scripts to perform valley training.
 
 ### Pretrain
-The llm backbone that currently supports pre-training is Llama(7b,13b), vicuna(7b,13b), stable-vicuna(13b), Llama2(chat-7b, chat-13b). You need to download these open source language model weights yourself and convert them to the huggingface format. 
+The llm backbone that currently supports pre-training is Llama(7b,13b), vicuna(7b,13b), stable-vicuna(13b), Llama2(chat-7b, chat-13b). You need to download these open source language model weights yourself and convert them to the huggingface format.
 ```shell
 bash valley/train/train.sh valley/configs/experiment/valley_stage1.yaml
 ```
@@ -181,7 +152,7 @@ If the project is helpful to your research, please consider citing our paper as 
 
 ```bibtex
 @misc{luo2023valley,
-      title={Valley: Video Assistant with Large Language model Enhanced abilitY}, 
+      title={Valley: Video Assistant with Large Language model Enhanced abilitY},
       author={Ruipu Luo and Ziwang Zhao and Min Yang and Junwei Dong and Minghui Qiu and Pengcheng Lu and Tao Wang and Zhongyu Wei},
       year={2023},
       eprint={2306.07207},
