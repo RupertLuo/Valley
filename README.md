@@ -111,7 +111,7 @@ python3 inference/run_valley.py --model-name [PATH TO VALLEY WEIGHT] --video_fil
 
 Inference Chinese Valley
 ```
-python3 inference/run_valley.py --model-name [PATH TO CHINESE VALLEY WEIGHT] --video_file [PATH TO VIDEO] --quary [YOUR QUERY ON THE VIDEO] --system-prompt "你是大型语言视觉助手 Chinese-Valley。你能够理解用户提供的视觉内容或视频，并使用自然语言协助用户完成各种任务。请仔细按照人类的指令进行回答，并详细解释你的答案。"
+python3 inference/run_valley.py --model-name [PATH TO CHINESE VALLEY WEIGHT] --video_file [PATH TO VIDEO] --query [YOUR QUERY ON THE VIDEO] --system-prompt "你是大型语言视觉助手 Chinese-Valley。你能够理解用户提供的视觉内容或视频，并使用自然语言协助用户完成各种任务。请仔细按照人类的指令进行回答，并详细解释你的答案。"
 ```
 
 Inference in code
