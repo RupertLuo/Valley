@@ -137,7 +137,7 @@ def download(save_dir,jmId):
     print('{} succeed!'.format(jmId))
 
 def check_already(save_dir, args_list):
-    already_file = list(map(lambda x:x.name.split('.')[0].split('_')[1],save_dir.rglob('*.mp4')))
+    already_file = list(map(lambda x:x.name.split('.')[0].split('_')[1],Path(save_dir).rglob('*.mp4')))
     result = []
     for _, arg in args_list:
         if arg not in already_file:
@@ -150,7 +150,7 @@ def main(args):
     input_file_path = Path(args.input_file)
     all_data = js.load(open(input_file_path,'r'))
     
-    args.save_dir.mkdir(exist_ok=True, parents=True)
+    Path(args.save_dir).mkdir(exist_ok=True, parents=True)
     tp = ThreadPool(args.num_process)
     args_list = []
     for cat in all_data:
