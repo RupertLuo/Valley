@@ -1,6 +1,6 @@
 import argparse
 from transformers import AutoTokenizer
-from valley.model.valley import ValleyLlamaForCausalLM
+from valley.model.valley_model import ValleyLlamaForCausalLM
 import torch
 from enum import Enum
 

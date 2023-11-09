@@ -1,7 +1,7 @@
 import argparse
 import torch
 from transformers import AutoTokenizer
-from valley.model.valley import ValleyLlamaForCausalLM
+from valley.model.valley_model import ValleyLlamaForCausalLM
 import torch
 import os
 from valley.utils import disable_torch_init

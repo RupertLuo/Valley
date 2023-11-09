@@ -4,7 +4,7 @@ import torch
 import transformers
 from transformers import Trainer, TrainerCallback
 from valley.train.trainner import LLMCallback
-from valley.model.valley import ValleyLlamaForCausalLM
+from valley.model.valley_model import ValleyLlamaForCausalLM
 from valley.util.data_util import smart_tokenizer_and_embedding_resize, safe_save_model_for_hf_trainer
 from valley.data.dataset import make_video_supervised_data_module
 from valley.util.config import *

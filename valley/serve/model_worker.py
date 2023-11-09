@@ -24,7 +24,7 @@ from constants import WORKER_HEART_BEAT_INTERVAL
 from util.config import DEFAULT_IMAGE_PATCH_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN, DEFAULT_IMAGE_TOKEN, DEFAULT_VIDEO_TOKEN, DEFAULT_VIDEO_FRAME_TOKEN, DEFAULT_VI_START_TOKEN, DEFAULT_VI_END_TOKEN
 from utils import (build_logger, server_error_msg,
     pretty_print_semaphore)
-from model.valley import ValleyLlamaForCausalLM
+from valley.model.valley_model import ValleyLlamaForCausalLM
 from transformers import CLIPImageProcessor, CLIPVisionModel
 import decord
 from torchvision import transforms

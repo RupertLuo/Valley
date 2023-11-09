@@ -3,7 +3,7 @@ import torch
 import sys
 sys.path.append('./valley')
 from transformers import LlamaTokenizer
-from valley.model.valley import ValleyLlamaForCausalLM
+from valley.model.valley_model import ValleyLlamaForCausalLM
 import torch
 import os
 from valley.utils import disable_torch_init
