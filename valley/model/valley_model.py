@@ -41,13 +41,23 @@ class ValleyLlamaModel(LlamaModel):
             print('using temporal linear pooling')
             self.pooling_layer = nn.Linear(self.config.hidden_size * 256, 1)
             self.patch_pooling_method = "temporal_importance"
+        
+        if hasattr(config, "use_patch_importance_transformer") and config.use_patch_importance_transformer:
+            print('using temporal transformer delta adding')
+            self.transforemr_adding_layer = nn.TransformerEncoderLayer(d_model=config.hidden_size, nhead=8, batch_first=True)
+            self.transformer_delta_encoder = nn.TransformerEncoder(self.transforemr_adding_layer, num_layers=1)
+            self.patch_pooling_method = "temporal_transformer"
+            # self.position_matrix = torch.nn.Parameter(self.getPositionEncoding(seq_len=2048, d = config.hidden_size))
+            self.position_matrix = torch.nn.Parameter(torch.zeros(2048,config.hidden_size))
+            self.position_matrix.requires_grad = False
+
         if hasattr(config, "use_mm_proj"):
             self.mm_projector = nn.Linear(config.mm_hidden_size, config.hidden_size)
             print(config.mm_hidden_size, config.hidden_size)
 
 
     def initialize_vision_modules(self, vision_tower, mm_vision_select_layer,
-                                  pretrain_mm_mlp_adapter=None, use_patch_importance_pooling=False):
+                                  pretrain_mm_mlp_adapter=None, use_patch_importance_pooling=False, use_patch_importance_transformer=False):
         self.config.mm_vision_tower = vision_tower
 
         image_processor = CLIPImageProcessor.from_pretrained(vision_tower)
@@ -65,11 +75,19 @@ class ValleyLlamaModel(LlamaModel):
 
         self.config.use_mm_proj = True
         self.config.use_patch_importance_pooling = use_patch_importance_pooling
+        self.config.use_patch_importance_transformer = use_patch_importance_transformer
         self.config.mm_hidden_size = vision_config.hidden_size
         self.config.mm_vision_select_layer = mm_vision_select_layer
         if not hasattr(self, 'pooling_layer') and use_patch_importance_pooling:
             self.pooling_layer = nn.Linear(self.config.hidden_size * 256, 1)
             self.patch_pooling_method = "temporal_importance"
+
+        if not hasattr(self, 'transformer_delta_encoder') and use_patch_importance_transformer:
+            self.transforemr_adding_layer = nn.TransformerEncoderLayer(d_model=self.config.hidden_size, nhead=8, batch_first=True)
+            self.transformer_delta_encoder = nn.TransformerEncoder(self.transforemr_adding_layer, num_layers=1)
+            self.patch_pooling_method = "temporal_transformer"
+            self.position_matrix = torch.nn.Parameter(self.getPositionEncoding(seq_len=2048, d = self.config.hidden_size))
+            self.position_matrix.requires_grad = False
 
         if not hasattr(self, 'mm_projector'):
             self.mm_projector = nn.Linear(vision_config.hidden_size, self.config.hidden_size)
@@ -92,7 +110,19 @@ class ValleyLlamaModel(LlamaModel):
         patch_feature = score*patch_feature
         patch_feature = torch.sum(patch_feature, dim=0)
         return patch_feature
-        
+    
+    def temporal_tranforemr_delta_adding(self,patch_feature):# 8, 256, 5120
+        patch_feature = patch_feature.permute(1,0,2) # 256,8,5120
+        sequence_length = patch_feature.shape[1]
+        patch_number = patch_feature.shape[0]
+        position_embedding = self.position_matrix[:sequence_length,:].unsqueeze(0).type_as(patch_feature)# 1,8,5120
+        position_embedding = position_embedding.repeat(patch_number,1,1).to(patch_feature.device) # 256,8,5120
+        patch_feature_pos = patch_feature+position_embedding
+        patch_feature_delta = self.transformer_delta_encoder(patch_feature_pos)[:,-1,:]
+        patch_feature_mean = torch.mean(patch_feature, dim=1) # 256 , 4096
+        patch_feature = patch_feature_delta + patch_feature_mean
+        return patch_feature
+
     def forward(
         self,
         input_ids: torch.LongTensor = None,
@@ -170,7 +200,9 @@ class ValleyLlamaModel(LlamaModel):
                     mean_image_features = torch.max(cur_image_features[:,1:,:],dim=0)[0] # 256 , 4096
                 elif self.patch_pooling_method == 'temporal_importance':
                     mean_image_features = self.text_importance_pooling(cur_image_features[:,1:,:]) # 256 , 4096
-                    
+                elif self.patch_pooling_method == 'temporal_transformer':
+                    mean_image_features = self.temporal_tranforemr_delta_adding(cur_image_features[:,1:,:]) # 256 , 4096
+
                 frame_image_features = cur_image_features[:,0,:]# frame_length, 4096
                 num_patches = mean_image_features.shape[0]
                 # print(mean_image_features.shape)

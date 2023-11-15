@@ -22,8 +22,9 @@ class ModelArguments:
     pretrain_mm_mlp_adapter: Optional[str] = field(default=None)
     mm_use_im_start_end: bool = field(default=False)
     tune_llm_layer: str=field(default= None)
-    patch_pooling_method: str=field(default='mean')
-    use_patch_importance_pooling: bool=field(default=False)
+    patch_pooling_method: str=field(default='mean')# v1
+    use_patch_importance_pooling: bool=field(default=False)# v2
+    use_delta_transformer: bool=field(default=False)# v3
 
 
 @dataclass
@@ -120,7 +121,9 @@ def train(args):
         model_vision_dict = model.get_model().initialize_vision_modules(
             vision_tower=model_args.vision_tower,
             mm_vision_select_layer=model_args.mm_vision_select_layer,
-            pretrain_mm_mlp_adapter=model_args.pretrain_mm_mlp_adapter
+            pretrain_mm_mlp_adapter=model_args.pretrain_mm_mlp_adapter,
+            use_patch_importance_pooling = model_args.use_patch_importance_pooling,
+            use_delta_transformer = model_args.use_delta_transformer
         )
         dtype = torch.float32
         if training_args.fp16:
