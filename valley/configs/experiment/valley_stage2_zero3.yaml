@@ -1,58 +1,45 @@
-model_name_or_path:  Path/ to/ pretrain/ valley/ from/ stage1
-data_path:  Path/ to/ LLaVA-Instruct-150K/ llava_instruct_150k.json
-image_folder:  Path/ to/ COCO/ train2014
-video_data_path: /Path/ to/ Valley-Instruct/ valley_instruct_73k.json
-video_folder:  Path/ to/ Valley-Instruct/ videos
-output_dir: Model/ Output/ path
-prediction_file_name: Model/ Output/ path/ eval_result.jsonl  # evaluation file output path
+deepspeed: valley/configs/deepspeed/config_zero3.json
+model_class: valley-video
+model_name_or_path: /mnt/bn/luoruipu-disk/checkpoints/valley2-7b-v1/
+video_data_path: /mnt/bn/luoruipu-disk/meta_data/toy_data/pretrain_video_chat.json
+video_folder: /mnt/bn/luoruipu-disk/meta_data/toy_data/finetune_video
+data_path: /mnt/bn/luoruipu-disk/meta_data/toy_data/finetune_image_chat.json
+image_folder: /mnt/bn/luoruipu-disk/meta_data/toy_data/finetune_image
 # experiment name
-project_name: valley2
-run_name: valley_stage2_zero3
-# Whether to make the system prompt a mask in the label, and others do not mask
-only_mask_system: False
-# system prompt style
-conv_mode: v1
-# wether freeze backbone
-freeze_backbone: False
-# wether tune multimodal projection layer
-tune_mm_mlp_adapter: True
-# wether freeze multimodal projection layer
-freeze_mm_mlp_adapter: False
-# wether lora
-lora: False
-# wether multimodal
-is_multimodal: True
-
-num_train_epochs: 3
-per_device_train_batch_size: 1 # zero3 must 1
-per_device_eval_batch_size: 1 # must 1
-save_strategy: steps
-save_steps: 3000
-evaluation_strategy: "no"
-eval_steps: 3000
-eval_num: 600
-use_legacy_prediction_loop: True
-predict_with_generate: True
-prediction_loss_only: False
-generation_max_length: 1536
-learning_rate: 2e-5
-gradient_checkpointing: True
-
-# wether do fast epoch
-fast_epoch: False
-
+project_name: valley-mfe-gandalf
+run_name: gandalf
+is_fashion_data: True
 vision_tower: openai/clip-vit-large-patch14
+version: "v0"
+prompt_version: "mfe_v0"
+only_mask_system: False
+mm_vision_select_feature: 'cls_patch'
 mm_vision_select_layer: -2
 mm_use_im_start_end: True
-lazy_preprocess: True
+mm_use_im_patch_token: False
+tune_mm_mlp_adapter: True
+freeze_backbone: True
+group_by_modality_length: True
 bf16: False
 fp16: True
-tf32: False
+lora_enable: True
+output_dir: /mnt/bn/luoruipu-disk/checkpoints/debug
+num_train_epochs: 3
+per_device_train_batch_size: 8
+per_device_eval_batch_size: 4
 gradient_accumulation_steps: 1
+evaluation_strategy: "no"
+save_strategy: "no"
+lora_save_strategy: "steps"
+save_steps: 3000
+learning_rate: 5e-4
 weight_decay: 0.
-warmup_ratio: 0.03 
+warmup_ratio: 0.00
 lr_scheduler_type: cosine
-logging_steps: 1 
-model_max_length: 2048 
-deepspeed: valley/configs/deepspeed/config_zero3.json
+logging_steps: 1
+tf32: False
+model_max_length: 2048
+gradient_checkpointing: True
+dataloader_num_workers: 4
+lazy_preprocess: True
 report_to: wandb

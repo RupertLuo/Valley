@@ -1,0 +1,194 @@
+[
+  {
+    "id": 77,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000515716.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "What might be the reason behind this gathering?\n<image>"
+      }
+    ],
+    "type": "complex",
+    "gt_label": "It appears that the group of people are gathered for a wine tasting or celebration in which they are enjoying various types of wine. They are seen standing and sitting around a table with several wine bottles and holding wine glasses. Their smiles and the friendly atmosphere indicate that it's a social event where they have gathered to indulge in sampling different wines, engage in conversations, and enjoy each other's company."
+  },
+  {
+    "id": 58,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000203629.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "Can you describe the main features of this image for me?\n<image>"
+      }
+    ],
+    "type": "detail",
+    "gt_label": "The image depicts a group of people gathered inside a room, creating a lively social atmosphere. A man is prominently featured in the scene, holding a cell phone to his ear and smiling with a thumbs-up gesture, possibly posing for a picture or simply enjoying the conversation.\\n\\nThere are multiple other people in the room, adding to the gathering and engaging in various conversations. The scene also has two cups visible, one on the left side of the room and another on the right side, indicating that the gathering may be a casual social event."
+  },
+  {
+    "id": 13,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000056013.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "Describe the following image.\n<image>"
+      }
+    ],
+    "type": "detail",
+    "gt_label": "The scene is set in a lobby at a commercial business, where a wheeled luggage cart is filled with various suitcases and bags. There are a number of luggage bags, including two backpacks, one near the front of the cart and another near the back, as well as multiple suitcases placed on different sections of the cart. \\n\\nA handbag is also visible, placed near the front of the cart. Two people are present in the scene: one person standing near the left side and another person on the right side, possibly engaging in conversation or waiting to transport their luggage to their rooms."
+  },
+  {
+    "id": 6,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000506095.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "What is the main focus of the image?\n<image>"
+      }
+    ],
+    "type": "conv",
+    "gt_label": "The main focus of the image is a cat or kitten sitting on or next to a laptop computer."
+  },
+  {
+    "id": 10,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000514915.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "Describe the following image.\n<image>"
+      }
+    ],
+    "type": "detail",
+    "gt_label": "The image features a large black dog with a red collar laying down on a kitchen floor. The tiled floor provides a comfortable space for the dog to relax. The dog is positioned towards the middle of the scene. Next to the dog, there are two bowls placed on the floor, one around the top-left side and the other slightly further to the right. These could be the dog's food and water bowls. The scene depicts a cozy domestic environment for the dog."
+  },
+  {
+    "id": 37,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000092109.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "What is this photo about?\n<image>"
+      }
+    ],
+    "type": "detail",
+    "gt_label": "The image is a clear and colorful close up of a giraffe's head, showcasing its beautiful features. The giraffe is standing tall among several bright green trees, likely in its natural habitat. It appears to be chewing on some leaves, while its face is turned to the side, providing a detailed view of its profile."
+  },
+  {
+    "id": 7,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000506095.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "What is this photo about?\n<image>"
+      }
+    ],
+    "type": "detail",
+    "gt_label": "The image features a cat sitting on a wooden desk, intently staring at a black laptop computer that is open in front of it. The desk is quite organized, with several books spread around, both on the left and right sides of the laptop. Some books are neatly piled and others are laid out individually. The scene could be interpreted as the cat appearing to use the laptop or showing interest in what's on the screen."
+  },
+  {
+    "id": 55,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000066144.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "Explain the visual content of the image in great detail.\n<image>"
+      }
+    ],
+    "type": "detail",
+    "gt_label": "In the scene, a woman is standing in front of a window, observing the street outside. On the street, a vintage Volkswagen Bug is parked near a stop sign, which is located towards the center of the image. Several other cars occupy the street, including one positioned to the left of the Volkswagen and two others in the background. On the far left and far right sides of the image, there are additional cars partially visible. The street also features a tree growing near the stop sign, adding a touch of greenery to the urban setting."
+  },
+  {
+    "id": 78,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000460149.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "What is the main object featured in the image?\n<image>"
+      }
+    ],
+    "type": "conv",
+    "gt_label": "The main object featured in the image is the clock mounted on a pole or a short tower, standing on the sidewalk next to a building."
+  },
+  {
+    "id": 20,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000164255.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "What purpose does the umbrella serve on the beach?\n<image>"
+      }
+    ],
+    "type": "complex",
+    "gt_label": "The colorful umbrella set up on the beach serves several purposes. First, it provides shade from the sun, which helps protect people from direct sunlight and the associated harmful UV rays, reducing the risk of sunburn and heatstroke. Second, it offers a comfortable spot to relax, rest, and enjoy the beach ambiance without being exposed to the intense sun or heat. Finally, the umbrella creates a designated area for beach-goers to keep their belongings and have a visible landmark to locate their spot quickly when in the crowded beach environment."
+  },
+  {
+    "id": 63,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000431165.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "What is the color of the elephant in the image?\n<image>"
+      }
+    ],
+    "type": "conv",
+    "gt_label": "The color of the elephant in the image is grey."
+  },
+  {
+    "id": 80,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000460149.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "Imagine you are walking down this street; how would you know the time or which direction the sidewalk leads?\n<image>"
+      }
+    ],
+    "type": "complex",
+    "gt_label": "As you walk down this quiet street, you can easily tell the time by looking at the tall clock that is mounted on a pole along the sidewalk. This clock stands out significantly, making it easily noticeable. Regarding the direction of the sidewalk, the presence of potted plants, bicycles, and cars suggest that this is a well-maintained and organized street. As you follow the sidewalk further, you will see that it is lined with trees, potted plants, and parked bicycles and cars, guiding you in the direction it leads. Additionally, the building next to the clock also gives you context for the orientation and direction of the street."
+  },
+  {
+    "id": 59,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000203629.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "What might be the reason behind the man's thumbs-up gesture while on the phone?\n<image>"
+      }
+    ],
+    "type": "complex",
+    "gt_label": "It is likely that the man is giving a thumbs-up gesture while talking on the phone to express a positive emotion or to signal agreement, approval, or satisfaction with the conversation he is having. This non-verbal communication can be conveyed to the people around him or to the person taking the picture of him while on the phone call. The man might be receiving good news, agreeing with the person on the phone, or sharing his excitement with the group of people surrounding him in the room. The specific reason cannot be precisely determined from the image alone, but it does indicate a positive sentiment associated with the phone call."
+  },
+  {
+    "id": 4,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000353536.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "Describe the following image.\n<image>"
+      }
+    ],
+    "type": "detail",
+    "gt_label": "The image showcases a dining table filled with various dirty dishes, eating utensils, and a bottle. The table has plates and glasses scattered across it. There are at least two cups on the table, with one positioned on the left and another on the right side. \\n\\nTwo forks can be seen, one resting on a small white plate and the other located towards the left side of the table. A spoon is also present, placed near the left corner of the table. Additionally, there is a bottle located in the upper central area of the table."
+  },
+  {
+    "id": 75,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000515716.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "How many people are visible in the image?\n<image>"
+      }
+    ],
+    "type": "conv",
+    "gt_label": "There are three people visible in the image - two women and one man."
+  },
+  {
+    "id": 83,
+    "image": "valley/inference/sample_input/sample_image/COCO_val2014_000000293505.jpg",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "What challenges might the woman on the motorcycle face in this situation?\n<image>"
+      }
+    ],
+    "type": "complex",
+    "gt_label": "The woman on the motorcycle might face challenges navigating the dirt road, especially because of the presence of multiple objects and living beings on the road. In the image, a cow is nearby, along with two other smaller cows, two men, and a dog. Dirt roads can be uneven, dusty, and unpredictable, making it important for the woman to maneuver cautiously to avoid any potential accidents. Additionally, she needs to be aware of the animals and people around her to ensure both her safety and the safety of others. This situation requires her to be vigilant, slow down when necessary, and carefully navigate through the environment."
+  }
+]

@@ -1,0 +1,48 @@
+model_class: valley-product
+deepspeed: valley/configs/deepspeed/config_zero3.json
+model_name_or_path: /mnt/bn/luoruipu-disk/chobits/valley/ckpt/finetune/1103_7b_valleyproduct/
+data_path: /mnt/bn/yangmin-priv/Projects/productIC/sft_data/version3-singletoken/level2/train.json
+video_data_path: null
+max_img_num: 4
+output_dir: /mnt/bn/luoruipu-disk/gaoyuan/valley/ckpt/finetune/1114_7b_vallyic_promptv3_level2
+# experiment name
+project_name: valley-ic
+run_name: codetest
+# Whether to make the system prompt a mask in the label, and others do not mask
+only_mask_system: False
+vision_tower: openai/clip-vit-large-patch14
+# padding and seperation token
+version: "v0"
+# system prompt style 
+prompt_version: "ic_common"
+only_mask_system: False
+mm_vision_select_feature: 'cls_patch'
+mm_vision_select_layer: -2
+mm_use_im_start_end: True
+mm_use_im_patch_token: False
+tune_mm_mlp_adapter: True
+freeze_backbone: False
+group_by_modality_length: True
+bf16: False
+fp16: True
+lora_enable: False
+output_dir: /mnt/bn/luoruipu-disk/checkpoints/debug
+num_train_epochs: 3
+per_device_train_batch_size: 4
+per_device_eval_batch_size: 1
+gradient_accumulation_steps: 1
+evaluation_strategy: "no"
+save_strategy: "steps"
+# lora_save_strategy: "steps"
+save_steps: 3000
+learning_rate: 2e-5
+weight_decay: 0.
+warmup_ratio: 0.00
+lr_scheduler_type: cosine
+logging_steps: 1
+tf32: False
+model_max_length: 2048
+gradient_checkpointing: True
+dataloader_num_workers: 12
+lazy_preprocess: True
+report_to: wandb

@@ -1,0 +1,178 @@
+[
+  {
+    "video": "valley/inference/sample_input/sample_video/video7929.mp4",
+    "gt_label": "drive",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "what is a gamer doing?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video7929.mp4"
+  },
+  {
+    "video": "valley/inference/sample_input/sample_video/video8302.mp4",
+    "gt_label": "food",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "what is a person talking about in a restaurant?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video8302.mp4"
+  },
+  {
+    "video": "valley/inference/sample_input/sample_video/video7757.mp4",
+    "gt_label": "play",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "what is man doing?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video7757.mp4"
+  },
+  {
+    "video": "valley/inference/sample_input/sample_video/video7412.mp4",
+    "gt_label": "stand",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "what is a man in black dress doing?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video7412.mp4"
+  },
+  {
+    "video": "valley/inference/sample_input/sample_video/video8690.mp4",
+    "gt_label": "hold",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "what is in a kitchen a blonde haired woman doing?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video8690.mp4"
+  },
+  {
+    "video": "valley/inference/sample_input/sample_video/video9841.mp4",
+    "gt_label": "overlay",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "what shows the contestants who are participating in a track event?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video9841.mp4"
+  },
+  {
+    "video": "valley/inference/sample_input/sample_video/video7267.mp4",
+    "gt_label": "tray",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "what is orange mix put in along with a row of cups?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video7267.mp4"
+  },
+  {
+    "video": "valley/inference/sample_input/sample_video/video9798.mp4",
+    "gt_label": "cook",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "what is a man cracks a plant before doing?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video9798.mp4"
+  },
+  {
+    "video": "valley/inference/sample_input/sample_video/video9111.mp4",
+    "gt_label": "woman",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "who do a photoshop tutorial featuring a photo of?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video9111.mp4"
+  },
+  {
+    "video": "valley/inference/sample_input/sample_video/video7387.mp4",
+    "gt_label": "ground",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "what is blind mole rat sitting in?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video7387.mp4"
+  },
+  {
+    "video": "valley/inference/sample_input/sample_video/video9613.mp4",
+    "gt_label": "fix",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "what is a man doing?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video9613.mp4"
+  },
+  {
+    "video": "valley/inference/sample_input/sample_video/video8178.mp4",
+    "gt_label": "three",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "how many boys dance in another room?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video8178.mp4"
+  },
+  {
+    "video": "valley/inference/sample_input/sample_video/video8784.mp4",
+    "gt_label": "person",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "who is using a cookie cutter on a different piece afterwards?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video8784.mp4"
+  },
+  {
+    "video": "valley/inference/sample_input/sample_video/video8233.mp4",
+    "gt_label": "paper",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "what does a person make?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video8233.mp4"
+  },
+  {
+    "video": "valley/inference/sample_input/sample_video/video9550.mp4",
+    "gt_label": "woman",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "who is demonstrating hair removal?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video9550.mp4"
+  },
+  {
+    "video": "valley/inference/sample_input/sample_video/video7376.mp4",
+    "gt_label": "leveler",
+    "conversations": [
+      {
+        "from": "human",
+        "value": "who do the person stir with?\n<video>"
+      }
+    ],
+    "id": "msrvtt_video7376.mp4"
+  }
+]

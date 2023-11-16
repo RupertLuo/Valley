@@ -1,0 +1,58 @@
+#!/bin/bash
+
+USER_ENV=`whoami`
+
+echo "=== Arnold torch distributed launch script ==="
+echo "=== contact: haibin.lin@bytedance.com ==="
+
+set -x
+
+if [[ "$ARNOLD_TRIAL_ID" == "" ]]; then
+  nnodes=1
+  node_rank=0
+  trial_id=12345
+  NCCL_IB_DISABLE=1
+  nproc_per_node=${nproc_per_node:=$(nvidia-smi --list-gpus | wc -l)}
+  additional_args="--standalone"
+else
+  master_addr=${master_addr:=$ARNOLD_WORKER_0_HOST}
+  master_port=${master_port:=$(echo "$ARNOLD_WORKER_0_PORT" | cut -d "," -f 1)}
+  additional_args="--rdzv_endpoint=${master_addr}:${master_port}"
+  if [[ "$nnodes" == "1" ]]; then
+    additional_args="$additional_args --standalone"
+  fi
+fi
+
+nproc_per_node="${nproc_per_node:=$ARNOLD_WORKER_GPU}"
+nnodes="${nnodes:=$ARNOLD_WORKER_NUM}"
+node_rank="${node_rank:=$ARNOLD_ID}"
+trial_id="${trial_id:=$ARNOLD_TRIAL_ID}"
+
+if [[ "$ARNOLD_DEVICE_TYPE" == *A100* ]]; then
+  IB_HCA=mlx5
+else
+  IB_HCA=$ARNOLD_RDMA_DEVICE:1
+fi
+
+if [ "$ARNOLD_RDMA_DEVICE" != "" ]; then
+   export NCCL_IB_DISABLE=${NCCL_IB_DISABLE:=0}
+   export NCCL_IB_HCA=${NCCL_IB_HCA:=$IB_HCA}
+   export NCCL_IB_GID_INDEX=${NCCL_IB_GID_INDEX:=3}
+   export NCCL_SOCKET_IFNAME=${NCCL_SOCKET_IFNAME:=eth0}
+else
+   export NCCL_IB_DISABLE=${NCCL_IB_DISABLE:=1}
+   export NCCL_SOCKET_IFNAME=${NCCL_SOCKET_IFNAME:=eth0}
+fi
+
+# setup tensorboard server if applicable
+if [[ "$TENSORBOARD_LOGDIR" != "" ]]; then
+  tensorboard_default_port="${ARNOLD_TENSORBOARD_CURRENT_PORT:=6006}"
+  tensorboard_port="${TENSORBOARD_PORT:=$tensorboard_default_port}"
+  nohup tensorboard --logdir=${TENSORBOARD_LOGDIR} --port=$tensorboard_port --bind_all > tensorboard.log 2>&1 &
+fi
+
+torchrun \
+  --node_rank=$node_rank \
+  --nproc_per_node=$nproc_per_node \
+  --nnodes=$nnodes \
+  $additional_args $@
