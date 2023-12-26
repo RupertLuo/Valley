@@ -21,6 +21,7 @@ The online demo is no longer available, because we released the code for offline
 adhsofahisdfa;osduifha;osdihf;aoisdhf
 a;osdihfa;oishdf;aoishf;so
 
+
 ## Release
 - [8/14] 🔥 We released the Chinese version of Valley! Now its 7B and 13b weights are available at [Chinese-Valley7B-V1](https://huggingface.co/Zhaoziwang/chinese_valley7b_v1) and [Chinese-Valley13B-V1](https://huggingface.co/Zhaoziwang/chinese_valley13b_v1).
 - [8/10] 🔥 Realeased pretrain stage weight of 13b and 7b ,[Valley2-7b-pretrain](https://huggingface.co/luoruipu1/Valley2-7b-pretrain/), [valley-13b-pretrain](https://huggingface.co/luoruipu1/valley-13b-pretrain).
