@@ -1,10 +1,9 @@
 # ⛰️Valley: Video Assistant with Large Language model Enhanced abilitY
 Understanding Complex Videos Relying on Large Language and Vision Models
-
-
 [[Project Page](https://valley-vl.github.io/)] [[Paper](https://arxiv.org/pdf/2306.07207.pdf)]
-
 The online demo is no longer available, because we released the code for offline demo deployment
+
+
 
 **Video Assistant with Large Language model Enhanced abilitY** <br>
 [Ruipu Luo*](https://github.com/RupertLuo), [Ziwang Zhao*](), [Min Yang*](https://github.com/feymanpriv) (*Equal Contribution)
@@ -19,6 +18,7 @@ The online demo is no longer available, because we released the code for offline
 **Usage and License Notices**: The data, code and checkpoint is intended and licensed for research use only. They are also restricted to uses that follow the license agreement of LLaMA, Vicuna and GPT-4. The dataset is CC BY NC 4.0 (allowing only non-commercial use) and models trained using the dataset should not be used outside of research purposes.
 
 ## Release
+- [24/12/24] 🔥🔥🔥🔥 [**Valley 2.0**](https://github.com/bytedance/Valley) is now available which is based on Qwen2.5!!! We strongly recommend using Valley 2.0, which has better code usability and better performance in image understanding and video understanding. **DOWNLOAD and TRY!** \[[code](https://github.com/bytedance/Valley)\]| \[[model](https://huggingface.co/bytedance-research/Valley-Eagle-7B)\]
 - [24/02/21] 🔥 **Important!!** Due to my previous preprocessing error, the actual valley_instruct data set did not have 65K, and the actual number was 65k. This data error has now been fixed. The link is at [Valley-Instruct-65k](https://huggingface.co/datasets/luoruipu1/Valley-Instruct-65k). And we provide a script ```get_jukinmedia_videourl.py``` to get the url of jukinmedia video. Please see huggingface’s repo for details.
 - [8/14] 🫧 We released the Chinese version of Valley! Now its 7B and 13b weights are available at [Chinese-Valley7B-V1](https://huggingface.co/Zhaoziwang/chinese_valley7b_v1) and [Chinese-Valley13B-V1](https://huggingface.co/Zhaoziwang/chinese_valley13b_v1).
 - [8/10] 🫧 Realeased pretrain stage weight of 13b and 7b ,[Valley2-7b-pretrain](https://huggingface.co/luoruipu1/Valley2-7b-pretrain/), [valley-13b-pretrain](https://huggingface.co/luoruipu1/valley-13b-pretrain).
